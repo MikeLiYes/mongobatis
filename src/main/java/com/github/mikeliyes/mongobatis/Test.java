@@ -3,6 +3,8 @@ package com.github.mikeliyes.mongobatis;
 import java.io.Reader;
 
 import com.github.mikeliyes.mongobatis.io.Resources;
+import com.github.mikeliyes.mongobatis.session.ShellSessionFactory;
+import com.github.mikeliyes.mongobatis.session.ShellSessionFactoryBuilder;
 
 public class Test {
 
@@ -14,7 +16,7 @@ public class Test {
 	            // 2.获取InputStreamReaderIo流
 	            Reader reader = Resources.getResourceAsReader(resources);
 //	            // 3.获取SqlSessionFactory
-	            SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+	            ShellSessionFactory sqlSessionFactory = new ShellSessionFactoryBuilder().build(reader);
 //	            // 4.获取Session
 //	            SqlSession sqlSession = sqlSessionFactory.openSession();
 //	            // 5.操作Mapper接口

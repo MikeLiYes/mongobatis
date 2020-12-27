@@ -1,5 +1,5 @@
 package com.github.mikeliyes.mongobatis.session;
 
-public class Configuration {
+public class ShellSessionFactory {
 
 }

@@ -22,7 +22,6 @@ public class Resources {
 	   * @throws java.io.IOException If the resource cannot be found or read
 	   */
 	  public static Reader getResourceAsReader(String resource) throws IOException {
-		URL path = Thread.currentThread().getContextClassLoader().getResource("");
 	    Reader reader = getResourceAsReader(resource,null); 
 	    return reader;
 	  }
