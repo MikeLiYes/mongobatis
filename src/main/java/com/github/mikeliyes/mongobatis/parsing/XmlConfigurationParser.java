@@ -3,25 +3,25 @@ package com.github.mikeliyes.mongobatis.parsing;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.Properties;
 
-import javax.xml.XMLConstants;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathFactory;
 
-import org.apache.ibatis.builder.BuilderException;
-import org.apache.ibatis.parsing.XNode;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import com.github.mikeliyes.mongobatis.exception.MessageException;
 import com.github.mikeliyes.mongobatis.model.Configuration;
+import com.github.mikeliyes.mongobatis.utils.XmlUtils;
 
 public class XmlConfigurationParser {
 
 	 private Document document;
+	 
+	 private XPath xpath;
+	 
+	 private Configuration configuration;
 
 	 public Document getDocument() {
 		return document;
@@ -30,64 +30,45 @@ public class XmlConfigurationParser {
 	public void setDocument(Document document) {
 		this.document = document;
 	}
+	
+	public Configuration getConfiguration() {
+		return configuration;
+	}
+
+	public void setConfiguration(Configuration configuration) {
+		this.configuration = configuration;
+	}
 
 	public XmlConfigurationParser(Reader reader) {
-	    this.document = createDocument(new InputSource(reader));  
+	    this.document = XmlUtils.createDocument(new InputSource(reader));  
+	    commonConstructor();
 	}
 	
+	private void commonConstructor() {
+		XPathFactory factory = XPathFactory.newInstance();
+	    this.xpath = factory.newXPath();
+	}
+
 	public XmlConfigurationParser(InputStream inputStream) {
-	    this.document = createDocument(new InputSource(new InputStreamReader(inputStream)));  
+	    this.document = XmlUtils.createDocument(new InputSource(new InputStreamReader(inputStream)));  
+	    commonConstructor();
 	}
 	
-	private Document createDocument(InputSource inputSource) {
-	    try {
-	      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-	      factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-	      factory.setValidating(true);
 
-	      factory.setNamespaceAware(false);
-	      factory.setIgnoringComments(true);
-	      factory.setIgnoringElementContentWhitespace(false);
-	      factory.setCoalescing(false);
-	      factory.setExpandEntityReferences(true);
-
-	      DocumentBuilder builder = factory.newDocumentBuilder();
-	      return builder.parse(inputSource);
-	    } catch (Exception e) {
-	      throw new MessageException("Error creating XmlConfigurationParser document instance, Cause: "+e);
-	    }
-	}
-	
-	public NodeList evalNode(String expression) {
-		NodeList nodeList = document.getElementsByTagName(expression);
-	    return nodeList;
-	}
 	
 	public Configuration parse() {
-	    parseConfiguration(parser.evalNode("/configuration"));
+		Node node =  XmlUtils.evalNode(xpath, "/configuration", document);
+	    parseConfiguration(node);
 	    return configuration;
 	  }
 
-	  private void parseConfiguration(XNode root) {
+	  private void parseConfiguration(Node root) {
 	    try {
-	      //issue #117 read properties first
-	      propertiesElement(root.evalNode("properties"));
-	      Properties settings = settingsAsProperties(root.evalNode("settings"));
-	      loadCustomVfs(settings);
-	      loadCustomLogImpl(settings);
-	      typeAliasesElement(root.evalNode("typeAliases"));
-	      pluginElement(root.evalNode("plugins"));
-	      objectFactoryElement(root.evalNode("objectFactory"));
-	      objectWrapperFactoryElement(root.evalNode("objectWrapperFactory"));
-	      reflectorFactoryElement(root.evalNode("reflectorFactory"));
-	      settingsElement(settings);
-	      // read it after objectFactory and objectWrapperFactory issue #631
-	      environmentsElement(root.evalNode("environments"));
-	      databaseIdProviderElement(root.evalNode("databaseIdProvider"));
-	      typeHandlerElement(root.evalNode("typeHandlers"));
-	      mapperElement(root.evalNode("mappers"));
+	      
+//	      dataSourceElement(root.getNodeValue());
+//	      mapperElement(root.evalNode("mappers"));
 	    } catch (Exception e) {
-	      throw new BuilderException("Error parsing SQL Mapper Configuration. Cause: " + e, e);
+	      throw new MessageException("Error parsing SQL Mapper Configuration. Cause: " + e);
 	    }
 	  }
 	

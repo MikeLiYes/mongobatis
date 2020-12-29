@@ -1,5 +1,45 @@
 package com.github.mikeliyes.mongobatis.utils;
 
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.xml.sax.InputSource;
+
+import com.github.mikeliyes.mongobatis.exception.MessageException;
+
 public class XmlUtils {
 
+	public static Document createDocument(InputSource inputSource) {
+	    try {
+	      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+	      factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+	      factory.setValidating(true);
+
+	      factory.setNamespaceAware(false);
+	      factory.setIgnoringComments(true);
+	      factory.setIgnoringElementContentWhitespace(false);
+	      factory.setCoalescing(false);
+	      factory.setExpandEntityReferences(true);
+
+	      DocumentBuilder builder = factory.newDocumentBuilder();
+	      return builder.parse(inputSource);
+	    } catch (Exception e) {
+	      throw new MessageException("Error creating XmlConfigurationParser document instance, Cause: "+e);
+	    }
+	}
+	
+	public static Node evalNode(XPath xpath,String expression,Object document) {	    
+	    try {
+		      return (Node) xpath.evaluate(expression,document, XPathConstants.NODE);
+		} catch (Exception e) {
+		      throw new MessageException("Error evaluating XPath.  Cause: " + e);
+		}
+	    
+	}
+	
 }
