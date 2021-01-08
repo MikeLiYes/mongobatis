@@ -14,8 +14,6 @@ public class ShellSessionFactoryBuilder {
 		try {
 	    	XmlConfigurationParser parser = new XmlConfigurationParser(reader);
 	      return build(parser.parse());
-	    } catch (Exception e) {
-	      throw new MessageException("Error building ShellSessionFactory reader."+e);
 	    } finally {
 	      try {
 	    	  reader.close();
@@ -28,8 +26,6 @@ public class ShellSessionFactoryBuilder {
 	    try {
 	    	XmlConfigurationParser parser = new XmlConfigurationParser(inputStream);
 	      return build(parser.parse());
-	    } catch (Exception e) {
-	      throw new MessageException("Error building ShellSessionFactory inputStream."+e);
 	    } finally {
 	      try {
 	        inputStream.close();

@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
   <dataSource>
-        <!-- 连接数据库的URL -->
-        <property name="url" value="${url}"/>
-        <!-- 
-        <property name="username" value="${username}"/>
-        <property name="password" value="${password}"/>
-         -->
+	  <property>
+	     <name>url</name>
+	     <value>127.0.0.1:27017</value>
+	  </property>
+	  <property>
+	      <name>username</name>
+	      <value>mikelee</value>
+	  </property>
+	  <property>
+	      <name>password</name>
+	      <value>mikelee</value>
+	  </property>
   </dataSource>
   <!-- 将mapper文件加入到配置文件中 
   <mappers>

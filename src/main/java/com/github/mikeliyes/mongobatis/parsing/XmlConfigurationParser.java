@@ -9,10 +9,11 @@ import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
-import com.github.mikeliyes.mongobatis.exception.MessageException;
 import com.github.mikeliyes.mongobatis.model.Configuration;
+import com.github.mikeliyes.mongobatis.model.DataSource;
 import com.github.mikeliyes.mongobatis.utils.XmlUtils;
 
 public class XmlConfigurationParser {
@@ -21,7 +22,11 @@ public class XmlConfigurationParser {
 	 
 	 private XPath xpath;
 	 
-	 private Configuration configuration;
+	 private static Configuration configuration;
+	 
+	 static{
+		 configuration = new Configuration();
+	 }
 
 	 public Document getDocument() {
 		return document;
@@ -57,20 +62,50 @@ public class XmlConfigurationParser {
 
 	
 	public Configuration parse() {
-		Node node =  XmlUtils.evalNode(xpath, "/configuration", document);
-	    parseConfiguration(node);
+		NodeList nodeList =  XmlUtils.evalNodeList(xpath, "configuration", document);
+	    parseConfiguration(nodeList);
 	    return configuration;
-	  }
+    }
 
-	  private void parseConfiguration(Node root) {
-	    try {
-	      
-//	      dataSourceElement(root.getNodeValue());
+	private void parseConfiguration(NodeList nodeList) {
+	      dataSourceElement(nodeList);
 //	      mapperElement(root.evalNode("mappers"));
-	    } catch (Exception e) {
-	      throw new MessageException("Error parsing SQL Mapper Configuration. Cause: " + e);
-	    }
-	  }
+	}
+
+	private void dataSourceElement(NodeList nodeList) {
+		for (int i = 0; i < nodeList.getLength(); i++) {
+			 Node node = nodeList.item(i); 
+			 dataSourceProperty(node);
+		}
+	}
+
+	private void dataSourceProperty(Node dsNode) {
+
+		DataSource ds = new DataSource();
+		
+		NodeList nodes = XmlUtils.evalNodeList(xpath, "dataSource/property", dsNode);
+		
+		for (int i = 0; i < nodes.getLength(); i++) {
+		    Node node = nodes.item(i);  
+		    configDataSourceByNode(ds, node);
+	        
+	   }
+		
+		configuration.setDataSource(ds);
+	}
+
+	private void configDataSourceByNode(DataSource ds, Node node) {
+		String name = (String)XmlUtils.evalString(xpath, "name", node);
+		String value = (String)XmlUtils.evalString(xpath, "value", node);
+		
+		if ("url".equalsIgnoreCase(name)) {
+			ds.setUrl(value);
+		}else if ("username".equalsIgnoreCase(name)){
+			ds.setName(value);
+		}else if ("password".equalsIgnoreCase(name)){
+			ds.setPassword(value);
+		}
+	}
 	
 	 
 }
