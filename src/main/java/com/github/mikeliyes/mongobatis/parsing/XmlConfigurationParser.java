@@ -41,7 +41,7 @@ public class XmlConfigurationParser {
 	}
 
 	public void setConfiguration(Configuration configuration) {
-		this.configuration = configuration;
+		XmlConfigurationParser.configuration = configuration;
 	}
 
 	public XmlConfigurationParser(Reader reader) {
@@ -68,33 +68,35 @@ public class XmlConfigurationParser {
     }
 
 	private void parseConfiguration(NodeList nodeList) {
-	      dataSourceElement(nodeList);
-//	      mapperElement(root.evalNode("mappers"));
-	}
-
-	private void dataSourceElement(NodeList nodeList) {
-		for (int i = 0; i < nodeList.getLength(); i++) {
-			 Node node = nodeList.item(i); 
-			 dataSourceProperty(node);
-		}
+	     for (int i = 0; i < nodeList.getLength(); i++) {
+				 Node node = nodeList.item(i); 
+				 dataSourceProperty(node);
+		 }
 	}
 
 	private void dataSourceProperty(Node dsNode) {
 
-		DataSource ds = new DataSource();
+		DataSource ds = null;
+		if (configuration.getDataSource() == null) {
+			ds = new DataSource();
+		}
+	
+		dataSourceProperty(dsNode, ds);
+		dataSourceMapper(dsNode,ds);
 		
+		configuration.setDataSource(ds);	
+	}
+
+	private void dataSourceProperty(Node dsNode, DataSource ds) {
 		NodeList nodes = XmlUtils.evalNodeList(xpath, "dataSource/property", dsNode);
 		
 		for (int i = 0; i < nodes.getLength(); i++) {
 		    Node node = nodes.item(i);  
-		    configDataSourceByNode(ds, node);
-	        
-	   }
-		
-		configuration.setDataSource(ds);
+		    dataSourceProperty(ds, node);
+		}
 	}
 
-	private void configDataSourceByNode(DataSource ds, Node node) {
+	private void dataSourceProperty(DataSource ds, Node node) {
 		String name = (String)XmlUtils.evalString(xpath, "name", node);
 		String value = (String)XmlUtils.evalString(xpath, "value", node);
 		
@@ -105,6 +107,22 @@ public class XmlConfigurationParser {
 		}else if ("password".equalsIgnoreCase(name)){
 			ds.setPassword(value);
 		}
+	}
+	
+	private void dataSourceMapper(Node dsNode,DataSource ds) {
+        NodeList nodes = XmlUtils.evalNodeList(xpath, "mappers/mapper", dsNode);
+		
+		for (int i = 0; i < nodes.getLength(); i++) {
+		    Node node = nodes.item(i);  
+		    resourceMapper(ds, node);
+		}
+	}
+
+	private void resourceMapper(DataSource ds, Node node) {
+		String name = (String)XmlUtils.evalString(xpath, "name", node);
+		String resource = (String)XmlUtils.evalString(xpath, "resource", node);
+		
+		ds.setMapper(name, resource);
 	}
 	
 	 

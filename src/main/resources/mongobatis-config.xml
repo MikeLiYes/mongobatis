@@ -14,9 +14,11 @@
 	      <value>mikelee</value>
 	  </property>
   </dataSource>
-  <!-- 将mapper文件加入到配置文件中 
+  <!-- 将mapper文件加入到配置文件中     -->
   <mappers>
-    <mapper resource="org/mybatis/example/BlogMapper.xml"/>
+    <mapper>
+         <name>BlogMapper</name>
+         <resource>org/mybatis/example/BlogMapper.xml</resource>
+    </mapper>
   </mappers>
-    -->
 </configuration>

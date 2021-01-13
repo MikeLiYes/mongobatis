@@ -1,12 +1,17 @@
 package com.github.mikeliyes.mongobatis.model;
 
-public class DataSource {
+import java.util.HashMap;
+import java.util.Map;
+
+public class DataSource{
    
 	private String name;
 	
 	private String password;
 	
 	private String url;
+	
+	private Map<String,String> mappers = new HashMap<String,String>();
 
 	public String getName() {
 		return name;
@@ -30,6 +35,17 @@ public class DataSource {
 
 	public void setUrl(String url) {
 		this.url = url;
+	}
+
+	public Object getMapper(String name) {
+		return mappers.get(name);
+	}
+
+	public void setMapper(String name,String resource) {
+		if (name == null || name.trim().equalsIgnoreCase("")) {
+			return;
+		}
+		mappers.put(name, resource);
 	}
 	
 	

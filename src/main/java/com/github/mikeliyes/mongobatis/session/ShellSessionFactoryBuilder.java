@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 
-import com.github.mikeliyes.mongobatis.exception.MessageException;
 import com.github.mikeliyes.mongobatis.model.Configuration;
 import com.github.mikeliyes.mongobatis.parsing.XmlConfigurationParser;
 
