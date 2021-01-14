@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapper namespace="com.github.mikeliyes.mongobatis.UserMapper">
+	<select id="queryAllUser" resultType="hello.model.User">
+		select * from user
+	</select>
+	
+	<select id="queryAllUserPage" resultType="hello.model.User">
+		select p.* fROM user p 
+		LEFT JOIN user s
+           on p.id=s.id
+	</select>
+</mapper>	
