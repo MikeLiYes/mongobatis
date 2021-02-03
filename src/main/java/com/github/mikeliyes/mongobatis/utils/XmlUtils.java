@@ -7,6 +7,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
@@ -52,13 +53,24 @@ public class XmlUtils {
 	    
 	}
 	
+	public static String evalAttribute(XPath xpath,String expression,Object document,String attributeName) {	    
+	    try {
+	    	Element element = (Element) xpath.evaluate(expression,document, XPathConstants.NODE);
+		    return element.getAttribute(attributeName);
+		} catch (Exception e) {
+		      throw new MessageException("Error evaluating Node path.  Cause: " + e);
+		}
+	    
+   }
+	
 	public static NodeList evalNodeList(XPath xpath,String expression,Object document) {	    
 	    try {
 		      return (NodeList) xpath.evaluate(expression,document, XPathConstants.NODESET);
 		} catch (Exception e) {
 		      throw new MessageException("Error evaluating NodeList path.  Cause: " + e);
 		}
-	    
 	}
+
+	
 	
 }

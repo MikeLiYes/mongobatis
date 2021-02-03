@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapper namespace="goodsMapper">
+
+	<update id="update">
+		update goods
+		where id=#{id}
+	</update>
+
+	<delete id="delete" parameterType="Integer">
+		delete from goods where
+		id=#{id}
+	</delete>
+
+	<select id="findPage" resultType="LONG">
+		SELECT
+		   *
+		FROM goods
+	</select>
+
+	<select id="count" resultType="LONG">
+		SELECT COUNT(*)
+		FROM goods
+	</select>
+
+</mapper>

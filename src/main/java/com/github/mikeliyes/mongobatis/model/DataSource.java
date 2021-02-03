@@ -1,6 +1,12 @@
 package com.github.mikeliyes.mongobatis.model;
 
 public class DataSource {
+	
+	public String ENV_DEV ="dev";
+	public String ENV_TEST ="test";
+	public String ENV_PRO ="pro";
+	
+	private String envId;
    
 	private String name;
 	
@@ -31,7 +37,13 @@ public class DataSource {
 	public void setUrl(String url) {
 		this.url = url;
 	}
-	
-	
-	
+
+	public String getEnvId() {
+		return envId;
+	}
+
+	public void setEnvId(String envId) {
+		this.envId = envId;
+	}
+
 }

@@ -3,6 +3,7 @@ package com.github.mikeliyes.mongobatis;
 import java.io.Reader;
 
 import com.github.mikeliyes.mongobatis.io.Resources;
+import com.github.mikeliyes.mongobatis.session.Session;
 import com.github.mikeliyes.mongobatis.session.ShellSessionFactory;
 import com.github.mikeliyes.mongobatis.session.ShellSessionFactoryBuilder;
 
@@ -12,15 +13,15 @@ public class Test {
 		 try {
 	            // 基本mybatis环境
 	            // 1.定义mybatis_config文件地址
-	            String resources = "mongobatis-config.xml";
+	            String resources = "mongobatis-config-dev.xml";
 	            // 2.获取InputStreamReaderIo流
 	            Reader reader = Resources.getResourceAsReader(resources);
 //	            // 3.获取SqlSessionFactory
-	            ShellSessionFactory sqlSessionFactory = new ShellSessionFactoryBuilder().build(reader);
+	            ShellSessionFactory shellSessionFactory = new ShellSessionFactoryBuilder().build(reader);
 //	            // 4.获取Session
-//	            SqlSession sqlSession = sqlSessionFactory.openSession();
+	            Session shellSession = shellSessionFactory.openSession();
 //	            // 5.操作Mapper接口
-//	            UserMapper mapper = sqlSession.getMapper(UserMapper.class);
+//	            UserMapper mapper = shellSession.getMapper(UserMapper.class);
 //	            UserEntity user = mapper.getUser(2);
 	            System.out.println("");
 	        } catch (Exception e) {

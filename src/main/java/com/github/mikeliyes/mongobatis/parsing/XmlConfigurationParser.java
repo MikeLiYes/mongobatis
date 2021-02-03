@@ -8,6 +8,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
@@ -25,7 +26,7 @@ public class XmlConfigurationParser {
 	 private static Configuration configuration;
 	 
 	 static{
-		 configuration = new Configuration();
+		 XmlConfigurationParser.configuration = new Configuration();
 	 }
 
 	 public Document getDocument() {
@@ -41,7 +42,7 @@ public class XmlConfigurationParser {
 	}
 
 	public void setConfiguration(Configuration configuration) {
-		this.configuration = configuration;
+		XmlConfigurationParser.configuration = configuration;
 	}
 
 	public XmlConfigurationParser(Reader reader) {
@@ -59,53 +60,48 @@ public class XmlConfigurationParser {
 	    commonConstructor();
 	}
 	
-
-	
 	public Configuration parse() {
-		NodeList nodeList =  XmlUtils.evalNodeList(xpath, "configuration", document);
-	    parseConfiguration(nodeList);
+	    parseConfiguration();
 	    return configuration;
     }
 
-	private void parseConfiguration(NodeList nodeList) {
-	      dataSourceElement(nodeList);
-//	      mapperElement(root.evalNode("mappers"));
+	private void parseConfiguration() {
+		dataSourceElement();
 	}
 
-	private void dataSourceElement(NodeList nodeList) {
-		for (int i = 0; i < nodeList.getLength(); i++) {
-			 Node node = nodeList.item(i); 
-			 dataSourceProperty(node);
-		}
+	private void dataSourceElement() {
+		NodeList nodes = XmlUtils.evalNodeList(xpath, "configuration/environment/dataSource", this.document);
+        dataSourceProperty(nodes);
 	}
 
-	private void dataSourceProperty(Node dsNode) {
+	private void dataSourceProperty(NodeList nodes) {
 
 		DataSource ds = new DataSource();
-		
-		NodeList nodes = XmlUtils.evalNodeList(xpath, "dataSource/property", dsNode);
-		
+				
 		for (int i = 0; i < nodes.getLength(); i++) {
 		    Node node = nodes.item(i);  
 		    configDataSourceByNode(ds, node);
-	        
 	   }
 		
-		configuration.setDataSource(ds);
+	   configuration.addDataSource(ds);
 	}
 
 	private void configDataSourceByNode(DataSource ds, Node node) {
-		String name = (String)XmlUtils.evalString(xpath, "name", node);
-		String value = (String)XmlUtils.evalString(xpath, "value", node);
 		
-		if ("url".equalsIgnoreCase(name)) {
-			ds.setUrl(value);
-		}else if ("username".equalsIgnoreCase(name)){
-			ds.setName(value);
-		}else if ("password".equalsIgnoreCase(name)){
-			ds.setPassword(value);
-		}
+		NodeList childNodes = node.getChildNodes();
+		for (int j = 0; j <childNodes.getLength() ; j++) {
+            if (childNodes.item(j).getNodeType()==Node.ELEMENT_NODE) {
+            	Element property = (Element)childNodes.item(j);
+            	String name = property.getAttribute("name");
+            	String value = property.getAttribute("value");
+            	if ("url".equalsIgnoreCase(name)) {
+        			ds.setUrl(value);
+        		}else if ("username".equalsIgnoreCase(name)){
+        			ds.setName(value);
+        		}else if ("password".equalsIgnoreCase(name)){
+        			ds.setPassword(value);
+        		}
+            }
+	    }
 	}
-	
-	 
 }
