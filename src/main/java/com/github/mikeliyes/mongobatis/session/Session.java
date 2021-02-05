@@ -13,8 +13,8 @@ public class Session {
         this.executor = executor;
 	}
     
-//    public <T> T getMapper(Class<T> type) {
-//      return configuration.getMapper(type, this);
-//    }
+    public <T> T getMapper(Class<T> type) {
+      return configuration.getMapper(type, this);
+    }
 
 }

@@ -21,7 +21,7 @@ public class Test {
 //	            // 4.获取Session
 	            Session shellSession = shellSessionFactory.openSession();
 //	            // 5.操作Mapper接口
-//	            UserMapper mapper = shellSession.getMapper(UserMapper.class);
+	            UserMapper mapper = shellSession.getMapper(UserMapper.class);
 //	            UserEntity user = mapper.getUser(2);
 	            System.out.println("");
 	        } catch (Exception e) {
