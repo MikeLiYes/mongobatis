@@ -1,7 +1,6 @@
 package com.github.mikeliyes.mongobatis.model;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.github.mikeliyes.mongobatis.executor.ShellExecutor;
@@ -13,38 +12,57 @@ public class Configuration {
 	
 	private Map<String,DataSource> dataSources;
 
-	private List<Mapper> mappers;
+	private Map<String,Mapper> mappers;
 	
-//	protected Mapper mapperRegistry = new Mapper(this);
-
-	public List<Mapper> getMappers() {
-		return mappers;
+	private Map<String,Aggregate> aggregates;
+	
+	public Configuration() {
+		if (this.dataSources == null || this.dataSources.size() == 0) {
+			this.dataSources = new HashMap<String,DataSource>();
+		}
+		
+		if (this.mappers == null || this.mappers.size() == 0) {
+			this.mappers = new HashMap<String,Mapper>();
+		}
+		
+		if (this.aggregates == null || this.aggregates.size() == 0) {
+			this.aggregates = new HashMap<String,Aggregate>();
+		}
 	}
 	
 	public Map<String,DataSource> getDataSources() {
 		return dataSources;
 	}
 
-	public void setDataSources(Map<String,DataSource> dataSources) {
-		this.dataSources = dataSources;
-	}
-
-	public void addDataSource(DataSource dataSource) {
+	public void setDataSource(DataSource dataSource) {
 		
-		if (this.dataSources == null || this.dataSources.size() == 0) {
-			this.dataSources = new HashMap<String,DataSource>();
+		if (dataSource != null && dataSource.getId() != null && dataSource.getId().trim() != "") {
+			this.dataSources.put(dataSource.getId(),dataSource);
 		}
 		
-		if (dataSource != null && dataSource.getEnvId() != null && dataSource.getEnvId().trim() != "") {
-			this.dataSources.put(dataSource.getEnvId(),dataSource);
+	}	
+
+	public Map<String,Mapper> getMappers() {
+		return mappers;
+	}
+	
+    public void setMapper(Mapper mapper) {
+		if (mapper != null && mapper.getId() != null && mapper.getId().trim() != "") {
+			this.mappers.put(mapper.getId(),mapper);
 		}
 		
+	}	
+	
+	public Map<String, Aggregate> getAggregates() {
+		return aggregates;
 	}
 
-	public void setMappers(List<Mapper> mappers) {
-		this.mappers = mappers;
+	public void setAggregate(Aggregate aggregate) {
+		if (aggregate != null && aggregate.getId() != null && aggregate.getId().trim() != "") {
+			this.aggregates.put(aggregate.getId(),aggregate);
+		}
 	}
-	 
+
 	public ShellExecutor newExecutor(){
 		return new ShellExecutor(this);
 	} 
@@ -52,9 +70,4 @@ public class Configuration {
 	public void getMapper() {
 		
 	}
-	
-//	public <T> T getMapper(Class<T> type, Session session) {
-//		return new Mapper();
-//	    return mapperRegistry.getMapper(type, session);
-//	}
 }

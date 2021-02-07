@@ -13,7 +13,7 @@ public class Test {
 		 try {
 	            // 基本mybatis环境
 	            // 1.定义mybatis_config文件地址
-	            String resources = "mongobatis-config-dev.xml";
+	            String resources = "mongobatis-config.xml";
 	            // 2.获取InputStreamReaderIo流
 	            Reader reader = Resources.getResourceAsReader(resources);
 //	            // 3.获取SqlSessionFactory
@@ -21,7 +21,7 @@ public class Test {
 //	            // 4.获取Session
 	            Session shellSession = shellSessionFactory.openSession();
 //	            // 5.操作Mapper接口
-	            UserMapper mapper = shellSession.getMapper(UserMapper.class);
+	            GoodsMapper mapper = shellSession.getMapper(GoodsMapper.class);
 //	            UserEntity user = mapper.getUser(2);
 	            System.out.println("");
 	        } catch (Exception e) {

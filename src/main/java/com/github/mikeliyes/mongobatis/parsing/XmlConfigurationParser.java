@@ -3,6 +3,8 @@ package com.github.mikeliyes.mongobatis.parsing;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.Map;
+import java.util.Set;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
@@ -15,6 +17,7 @@ import org.xml.sax.InputSource;
 
 import com.github.mikeliyes.mongobatis.model.Configuration;
 import com.github.mikeliyes.mongobatis.model.DataSource;
+import com.github.mikeliyes.mongobatis.model.Mapper;
 import com.github.mikeliyes.mongobatis.utils.XmlUtils;
 
 public class XmlConfigurationParser {
@@ -23,11 +26,7 @@ public class XmlConfigurationParser {
 	 
 	 private XPath xpath;
 	 
-	 private static Configuration configuration;
-	 
-	 static{
-		 XmlConfigurationParser.configuration = new Configuration();
-	 }
+	 private Configuration configuration;
 
 	 public Document getDocument() {
 		return document;
@@ -42,17 +41,12 @@ public class XmlConfigurationParser {
 	}
 
 	public void setConfiguration(Configuration configuration) {
-		XmlConfigurationParser.configuration = configuration;
+		this.configuration = configuration;
 	}
 
 	public XmlConfigurationParser(Reader reader) {
 	    this.document = XmlUtils.createDocument(new InputSource(reader));  
 	    commonConstructor();
-	}
-	
-	private void commonConstructor() {
-		XPathFactory factory = XPathFactory.newInstance();
-	    this.xpath = factory.newXPath();
 	}
 
 	public XmlConfigurationParser(InputStream inputStream) {
@@ -60,40 +54,86 @@ public class XmlConfigurationParser {
 	    commonConstructor();
 	}
 	
+	private void commonConstructor() {
+		configuration = new Configuration();
+		XPathFactory factory = XPathFactory.newInstance();
+	    this.xpath = factory.newXPath();
+	}
+	
 	public Configuration parse() {
-	    parseConfiguration();
+		
+		parseDataSource();
+		parseMappers();
+		
 	    return configuration;
     }
 
-	private void parseConfiguration() {
-		dataSourceElement();
+	private void parseMappersXml(String resource) {
+		Map<String,Mapper> maps = configuration.getMappers();
+		
+		Set<String> keys = maps.keySet();
+		if (keys == null || keys.size() == 0) {
+			return;
+		}
+		for (String id:keys) {
+			
+		}
+		
 	}
 
-	private void dataSourceElement() {
+	private void parseMappers() {
+		Node mappers = XmlUtils.evalNode(xpath, "configuration/mappers", this.document);
+		
+		NodeList childNodes = mappers.getChildNodes();
+		for (int j = 0; j <childNodes.getLength() ; j++) {
+            if (childNodes.item(j).getNodeType()==Node.ELEMENT_NODE) {
+            	Element mapperElement = (Element)childNodes.item(j);
+            	String id = mapperElement.getAttribute("id");
+            	String resource = mapperElement.getAttribute("resource");
+            	
+            	Mapper m = new Mapper();
+            	m.setId(id);
+            	m.setResource(resource);
+            	
+            	parseMappersXml(resource);
+            	
+            	configuration.setMapper(m);
+            }
+		} 
+		
+	}
+	
+	private void parseDataSource() {
 		NodeList nodes = XmlUtils.evalNodeList(xpath, "configuration/environment/dataSource", this.document);
-        dataSourceProperty(nodes);
-	}
-
-	private void dataSourceProperty(NodeList nodes) {
-
-		DataSource ds = new DataSource();
-				
+        
+        DataSource ds = new DataSource();
+		
 		for (int i = 0; i < nodes.getLength(); i++) {
 		    Node node = nodes.item(i);  
-		    configDataSourceByNode(ds, node);
+		    configDsId(ds, node);
+		    configDataSource(ds, node);
 	   }
-		
-	   configuration.addDataSource(ds);
+ 
 	}
 
-	private void configDataSourceByNode(DataSource ds, Node node) {
+	private void configDsId(DataSource ds, Node node) {
+		if (node.getNodeType()==Node.ELEMENT_NODE) {
+			Element dataSource = (Element)node;
+			String id = dataSource.getAttribute("id");
+			ds.setId(id);
+		}
+	}
+
+	private void configDataSource(DataSource ds, Node node) {
 		
 		NodeList childNodes = node.getChildNodes();
 		for (int j = 0; j <childNodes.getLength() ; j++) {
             if (childNodes.item(j).getNodeType()==Node.ELEMENT_NODE) {
             	Element property = (Element)childNodes.item(j);
+            	
             	String name = property.getAttribute("name");
             	String value = property.getAttribute("value");
+            	
             	if ("url".equalsIgnoreCase(name)) {
         			ds.setUrl(value);
         		}else if ("username".equalsIgnoreCase(name)){
@@ -101,7 +141,10 @@ public class XmlConfigurationParser {
         		}else if ("password".equalsIgnoreCase(name)){
         			ds.setPassword(value);
         		}
+            	
+            	
             }
 	    }
+		configuration.setDataSource(ds);
 	}
 }

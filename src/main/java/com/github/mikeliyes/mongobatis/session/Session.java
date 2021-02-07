@@ -14,7 +14,8 @@ public class Session {
 	}
     
     public <T> T getMapper(Class<T> type) {
-      return configuration.getMapper(type, this);
+//      return configuration.getMapper(type, this);
+    	return null;
     }
 
 }

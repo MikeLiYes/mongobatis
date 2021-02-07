@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mapper namespace="goodsMapper">
+<mapper nameSpace="com.rongge.ronggeopen.mapper.goods.GoodsMapper">
 
 	<update id="update">
 		update goods
@@ -11,11 +11,11 @@
 		id=#{id}
 	</delete>
 
-	<select id="findPage" resultType="LONG">
+	<aggregate id="findPage">
 		SELECT
 		   *
 		FROM goods
-	</select>
+	</aggregate>
 
 	<select id="count" resultType="LONG">
 		SELECT COUNT(*)

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <environment>
+	  <dataSource id="dev">
+             <property name="url" value="127.0.0.1:27017"/>
+             <!-- property name="username" value="mikelee"/> -->
+             <!-- property name="password" value="mikelee"/> -->
+	  </dataSource>
+	  <dataSource id="pro">
+             <property name="url" value="127.0.0.1:27017"/>
+             <!-- property name="username" value="mikelee"/> -->
+             <!-- property name="password" value="mikelee"/> -->
+	  </dataSource>
+  </environment>
+  <!-- 将mapper文件加入到配置文件中 -->
+  <mappers>
+    <mapper id="GoodsMapper" resource="mongobatis/mapper/GoodsMapper.xml"/>
+  </mappers>
+    
+</configuration>

@@ -6,7 +6,7 @@ public class DataSource {
 	public String ENV_TEST ="test";
 	public String ENV_PRO ="pro";
 	
-	private String envId;
+	private String id;
    
 	private String name;
 	
@@ -38,12 +38,11 @@ public class DataSource {
 		this.url = url;
 	}
 
-	public String getEnvId() {
-		return envId;
+	public String getId() {
+		return id;
 	}
 
-	public void setEnvId(String envId) {
-		this.envId = envId;
+	public void setId(String id) {
+		this.id = id;
 	}
-
 }

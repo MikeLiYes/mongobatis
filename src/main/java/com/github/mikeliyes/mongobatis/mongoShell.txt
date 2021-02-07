@@ -1,0 +1,14 @@
+
+###create test demo shell
+
+use example;
+
+db.goods.insert({'goodsId':'1','name':'沐浴乳','price':38,'weight':10});
+db.goods.insert({'goodsId':'2','name':'面包','price':8,'weight':2});
+db.goods.insert({'goodsId':'3','name':'书','price':23,'weight':5});
+db.goods.insert({'goodsId':'4','name':'口罩','price':15,'weight':2});
+
+
+
+
+
