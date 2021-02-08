@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mapper nameSpace="com.rongge.ronggeopen.mapper.goods.GoodsMapper">
+<mapper namespace="com.rongge.ronggeopen.mapper.goods.GoodsMapper">
 
 	<update id="update">
 		update goods
@@ -12,9 +12,11 @@
 	</delete>
 
 	<aggregate id="findPage">
-		SELECT
-		   *
-		FROM goods
+		db.goods.aggregate([
+		    {	
+				      $match: {'price':	{$gte:#{price}}	}
+				}
+		]);
 	</aggregate>
 
 	<select id="count" resultType="LONG">

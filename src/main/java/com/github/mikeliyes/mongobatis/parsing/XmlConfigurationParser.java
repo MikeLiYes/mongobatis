@@ -1,10 +1,9 @@
 package com.github.mikeliyes.mongobatis.parsing;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.Map;
-import java.util.Set;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
@@ -15,6 +14,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
+import com.github.mikeliyes.mongobatis.io.Resources;
+import com.github.mikeliyes.mongobatis.model.Aggregate;
 import com.github.mikeliyes.mongobatis.model.Configuration;
 import com.github.mikeliyes.mongobatis.model.DataSource;
 import com.github.mikeliyes.mongobatis.model.Mapper;
@@ -68,19 +69,7 @@ public class XmlConfigurationParser {
 	    return configuration;
     }
 
-	private void parseMappersXml(String resource) {
-		Map<String,Mapper> maps = configuration.getMappers();
-		
-		Set<String> keys = maps.keySet();
-		if (keys == null || keys.size() == 0) {
-			return;
-		}
-		for (String id:keys) {
-			
-		}
-		
-	}
-
+	/**       parse config.xml to Object start       **/
 	private void parseMappers() {
 		Node mappers = XmlUtils.evalNode(xpath, "configuration/mappers", this.document);
 		
@@ -88,16 +77,14 @@ public class XmlConfigurationParser {
 		for (int j = 0; j <childNodes.getLength() ; j++) {
             if (childNodes.item(j).getNodeType()==Node.ELEMENT_NODE) {
             	Element mapperElement = (Element)childNodes.item(j);
-            	String id = mapperElement.getAttribute("id");
             	String resource = mapperElement.getAttribute("resource");
             	
-            	Mapper m = new Mapper();
-            	m.setId(id);
-            	m.setResource(resource);
+            	Mapper mapper = new Mapper();
+            	mapper.setResource(resource);
             	
-            	parseMappersXml(resource);
+            	parseMappersXml(resource,mapper);
             	
-            	configuration.setMapper(m);
+            	configuration.setMapper(mapper);
             }
 		} 
 		
@@ -147,4 +134,61 @@ public class XmlConfigurationParser {
 	    }
 		configuration.setDataSource(ds);
 	}
+	/**       parse config.xml to Object  end      **/
+	
+	/**       parse mapper.xml to Object start       **/
+	private void parseMappersXml(String resource,Mapper mapper) {
+		Reader reader = null;
+		try {
+			reader = Resources.getResourceAsReader(resource);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		Document mapperDoc = XmlUtils.createDocument(new InputSource(reader));  
+		
+		//parse namespace
+		Node mapperNode = XmlUtils.evalNode(xpath, "mapper", mapperDoc);
+		if (mapperNode != null && mapperNode.getNodeType()==Node.ELEMENT_NODE) {
+        	Element mapperElement = (Element)mapperNode;
+        	String namespace = mapperElement.getAttribute("namespace");
+        	mapper.setNameSpace(namespace);
+		}	
+		
+		//parse aggregate
+		NodeList childNodes = mapperNode.getChildNodes();
+		for (int j = 0; j <childNodes.getLength() ; j++) {
+			if (childNodes.item(j).getNodeType()==Node.ELEMENT_NODE) {
+				Element shellEle = (Element)childNodes.item(j);
+                parseShellNode(shellEle, mapper);
+			}
+		}    
+		
+	}
+
+	private void parseShellNode(Element element,Mapper mapper) {
+		
+			String shellName = element.getNodeName();
+			
+			if (shellName != null 
+					&& shellName != ""
+					&& shellName.equalsIgnoreCase("aggregate")) {
+				
+				Aggregate aggregate = new Aggregate();
+				
+				String id = element.getAttribute("id");
+				aggregate.setId(id);
+				
+				String shell = element.getTextContent().replace("\n", "").replace("\t", "");
+				aggregate.setShell(new StringBuilder(shell));
+				
+				aggregate.setNameSpace(mapper.getNameSpace());
+				
+				mapper.setAggregate(aggregate);
+				
+				configuration.setAggregate(aggregate);
+			}
+		
+	}
+	
+	/**       parse mapper.xml to Object end       **/
 }

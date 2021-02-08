@@ -1,11 +1,14 @@
 package com.github.mikeliyes.mongobatis;
 
 import java.io.Reader;
+import java.util.Iterator;
+import java.util.List;
 
 import com.github.mikeliyes.mongobatis.io.Resources;
 import com.github.mikeliyes.mongobatis.session.Session;
 import com.github.mikeliyes.mongobatis.session.ShellSessionFactory;
 import com.github.mikeliyes.mongobatis.session.ShellSessionFactoryBuilder;
+import com.mongodb.DBObject;
 
 public class Test {
 
@@ -22,8 +25,14 @@ public class Test {
 	            Session shellSession = shellSessionFactory.openSession();
 //	            // 5.操作Mapper接口
 	            GoodsMapper mapper = shellSession.getMapper(GoodsMapper.class);
+	            List<DBObject>  list = mapper.findPage(9);
 //	            UserEntity user = mapper.getUser(2);
-	            System.out.println("");
+	            Iterator<DBObject> it = list.iterator();
+	            while(it.hasNext()){
+	            	DBObject n = it.next();
+	            	System.out.println("next : "+n);
+	            }
+	            
 	        } catch (Exception e) {
 	            e.printStackTrace();
 	        }

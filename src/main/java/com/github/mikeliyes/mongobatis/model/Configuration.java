@@ -3,6 +3,7 @@ package com.github.mikeliyes.mongobatis.model;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.github.mikeliyes.mongobatis.binding.MapperProxyFactory;
 import com.github.mikeliyes.mongobatis.executor.ShellExecutor;
 
 /**
@@ -16,6 +17,8 @@ public class Configuration {
 	
 	private Map<String,Aggregate> aggregates;
 	
+	private MapperProxyFactory factory;
+	
 	public Configuration() {
 		if (this.dataSources == null || this.dataSources.size() == 0) {
 			this.dataSources = new HashMap<String,DataSource>();
@@ -27,6 +30,10 @@ public class Configuration {
 		
 		if (this.aggregates == null || this.aggregates.size() == 0) {
 			this.aggregates = new HashMap<String,Aggregate>();
+		}
+		
+		if (this.factory == null) {
+			this.factory = new MapperProxyFactory();
 		}
 	}
 	
@@ -40,15 +47,15 @@ public class Configuration {
 			this.dataSources.put(dataSource.getId(),dataSource);
 		}
 		
-	}	
+	}
 
-	public Map<String,Mapper> getMappers() {
-		return mappers;
+	public <T> T getMapper(Class<T> type) {
+		return (T)factory.newInstance(type);
 	}
 	
     public void setMapper(Mapper mapper) {
-		if (mapper != null && mapper.getId() != null && mapper.getId().trim() != "") {
-			this.mappers.put(mapper.getId(),mapper);
+		if (mapper != null && mapper.getResource() != null && mapper.getResource().trim() != "") {
+			this.mappers.put(mapper.getResource(),mapper);
 		}
 		
 	}	
@@ -58,16 +65,16 @@ public class Configuration {
 	}
 
 	public void setAggregate(Aggregate aggregate) {
-		if (aggregate != null && aggregate.getId() != null && aggregate.getId().trim() != "") {
-			this.aggregates.put(aggregate.getId(),aggregate);
+		if (aggregate != null 
+				&& aggregate.getId() != null 
+				&& aggregate.getId().trim() != ""
+				&& aggregate.getNameSpace() != null
+				&& aggregate.getNameSpace().trim() != "") {
+			this.aggregates.put(aggregate.getNameSpace()+"."+aggregate.getId(),aggregate);
 		}
 	}
 
 	public ShellExecutor newExecutor(){
 		return new ShellExecutor(this);
 	} 
-	
-	public void getMapper() {
-		
-	}
 }

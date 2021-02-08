@@ -13,7 +13,7 @@ public interface GoodsMapper{
 	
 	public void insert(BasicDBObject goods);
 	
-	public List<DBObject> findPage(Long goodsKindId);
+	public List<DBObject> findPage(Integer price);
 	
 	public DBObject findDetail(Long goodsId);
 	

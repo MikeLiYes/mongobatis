@@ -7,11 +7,7 @@ public class MapperHandler implements InvocationHandler {
 
 	public Object invoke(Object proxy, Method method, Object[] args)
 			throws Throwable {
-		if (Object.class.equals(method.getDeclaringClass())) {
-	        return method.invoke(this, args);
-	    }else {
-	    	return null;
-	    } 
+	    return method.invoke(this, args);
 	}
 
 }

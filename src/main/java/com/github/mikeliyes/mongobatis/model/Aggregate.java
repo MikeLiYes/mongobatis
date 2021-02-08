@@ -3,6 +3,8 @@ package com.github.mikeliyes.mongobatis.model;
 import java.util.Map;
 
 public class Aggregate {
+	
+	private String nameSpace;
 
 	private String id;
 	
@@ -33,7 +35,13 @@ public class Aggregate {
 	public void setParameters(Map<String, Object> parameters) {
 		this.parameters = parameters;
 	}
-	
-	
-	
+
+	public String getNameSpace() {
+		return nameSpace;
+	}
+
+	public void setNameSpace(String nameSpace) {
+		this.nameSpace = nameSpace;
+	}
+
 }
