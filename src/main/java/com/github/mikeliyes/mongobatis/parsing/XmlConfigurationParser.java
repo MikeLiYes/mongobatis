@@ -186,6 +186,8 @@ public class XmlConfigurationParser {
 				mapper.setAggregate(aggregate);
 				
 				configuration.setAggregate(aggregate);
+				
+				
 			}
 		
 	}

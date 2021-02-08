@@ -3,7 +3,7 @@ package com.github.mikeliyes.mongobatis.model;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.github.mikeliyes.mongobatis.binding.MapperProxyFactory;
+import com.github.mikeliyes.mongobatis.binding.MapperProxy;
 import com.github.mikeliyes.mongobatis.executor.ShellExecutor;
 
 /**
@@ -11,13 +11,17 @@ import com.github.mikeliyes.mongobatis.executor.ShellExecutor;
  */
 public class Configuration {
 	
+	private static String METHOD_TYPE_AGGREGATE ="aggregate"; 
+	
 	private Map<String,DataSource> dataSources;
 
 	private Map<String,Mapper> mappers;
 	
+	private Map<String,String> methodTypes;
+	
 	private Map<String,Aggregate> aggregates;
 	
-	private MapperProxyFactory factory;
+	private MapperProxy factory;
 	
 	public Configuration() {
 		if (this.dataSources == null || this.dataSources.size() == 0) {
@@ -33,7 +37,11 @@ public class Configuration {
 		}
 		
 		if (this.factory == null) {
-			this.factory = new MapperProxyFactory();
+			this.factory = new MapperProxy(this);
+		}
+		
+		if (this.methodTypes == null) {
+			this.methodTypes = new HashMap<String,String>();
 		}
 	}
 	
@@ -70,8 +78,23 @@ public class Configuration {
 				&& aggregate.getId().trim() != ""
 				&& aggregate.getNameSpace() != null
 				&& aggregate.getNameSpace().trim() != "") {
-			this.aggregates.put(aggregate.getNameSpace()+"."+aggregate.getId(),aggregate);
+			String fullMethodName = aggregate.getNameSpace()+"."+aggregate.getId();
+			this.aggregates.put(fullMethodName,aggregate);
+			
+			this.methodTypes.put(fullMethodName, METHOD_TYPE_AGGREGATE);
 		}
+	}
+	
+	public String getMethodType(String fullMethodName){
+		  return this.methodTypes.get(fullMethodName);
+	}
+
+	public Map<String, String> getMethodType() {
+		return methodTypes;
+	}
+
+	public void setMethodType(Map<String, String> methodTypes) {
+		this.methodTypes = methodTypes;
 	}
 
 	public ShellExecutor newExecutor(){
