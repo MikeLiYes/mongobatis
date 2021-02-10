@@ -20,8 +20,8 @@ public class ShellSessionFactory {
 	}
 
 	public Session openSession() {
-		ShellExecutor executor = configuration.newExecutor();
-		return new Session(configuration, executor);
+//		ShellExecutor executor = configuration.newExecutor();
+		return new Session(configuration, null);
 	}
 	
 	

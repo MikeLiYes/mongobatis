@@ -4,24 +4,22 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.github.mikeliyes.mongobatis.binding.MapperProxy;
-import com.github.mikeliyes.mongobatis.executor.ShellExecutor;
+import com.github.mikeliyes.mongobatis.utils.StringUtils;
 
 /**
  * mongodb-configuration.xml
  */
 public class Configuration {
 	
-	private static String METHOD_TYPE_AGGREGATE ="aggregate"; 
+	public static String METHOD_TYPE_AGGREGATE ="aggregate"; 
 	
 	private Map<String,DataSource> dataSources;
 
 	private Map<String,Mapper> mappers;
+
+	private Map<String,ShellMethod> shellMethods = new HashMap<String,ShellMethod>();;
 	
-	private Map<String,String> methodTypes;
-	
-	private Map<String,Aggregate> aggregates;
-	
-	private MapperProxy factory;
+	private MapperProxy proxy;
 	
 	public Configuration() {
 		if (this.dataSources == null || this.dataSources.size() == 0) {
@@ -32,16 +30,8 @@ public class Configuration {
 			this.mappers = new HashMap<String,Mapper>();
 		}
 		
-		if (this.aggregates == null || this.aggregates.size() == 0) {
-			this.aggregates = new HashMap<String,Aggregate>();
-		}
-		
-		if (this.factory == null) {
-			this.factory = new MapperProxy(this);
-		}
-		
-		if (this.methodTypes == null) {
-			this.methodTypes = new HashMap<String,String>();
+		if (this.proxy == null) {
+			this.proxy = new MapperProxy(this);
 		}
 	}
 	
@@ -51,53 +41,41 @@ public class Configuration {
 
 	public void setDataSource(DataSource dataSource) {
 		
-		if (dataSource != null && dataSource.getId() != null && dataSource.getId().trim() != "") {
+		if (dataSource != null && StringUtils.isNotBlank(dataSource.getId())) {
 			this.dataSources.put(dataSource.getId(),dataSource);
 		}
 		
 	}
 
 	public <T> T getMapper(Class<T> type) {
-		return (T)factory.newInstance(type);
+		return (T)proxy.newInstance(type);
 	}
 	
     public void setMapper(Mapper mapper) {
-		if (mapper != null && mapper.getResource() != null && mapper.getResource().trim() != "") {
+		if (mapper != null && StringUtils.isNotBlank(mapper.getResource())) {
 			this.mappers.put(mapper.getResource(),mapper);
 		}
 		
-	}	
-	
-	public Map<String, Aggregate> getAggregates() {
-		return aggregates;
 	}
 
-	public void setAggregate(Aggregate aggregate) {
-		if (aggregate != null 
-				&& aggregate.getId() != null 
-				&& aggregate.getId().trim() != ""
-				&& aggregate.getNameSpace() != null
-				&& aggregate.getNameSpace().trim() != "") {
-			String fullMethodName = aggregate.getNameSpace()+"."+aggregate.getId();
-			this.aggregates.put(fullMethodName,aggregate);
-			
-			this.methodTypes.put(fullMethodName, METHOD_TYPE_AGGREGATE);
+	public Map<String, ShellMethod> getShellMethods() {
+		return shellMethods;
+	}
+	
+	public ShellMethod getShellMethod(String fullMethodName) {
+		 return this.shellMethods.get(fullMethodName);
+	}
+
+	public void setShellMethod(ShellMethod shellMethod) {
+		if (shellMethod == null) {
+			return;
 		}
+		this.shellMethods.put(shellMethod.getFullMethodName(), shellMethod);
 	}
-	
-	public String getMethodType(String fullMethodName){
-		  return this.methodTypes.get(fullMethodName);
-	}
+    
+    
 
-	public Map<String, String> getMethodType() {
-		return methodTypes;
-	}
-
-	public void setMethodType(Map<String, String> methodTypes) {
-		this.methodTypes = methodTypes;
-	}
-
-	public ShellExecutor newExecutor(){
-		return new ShellExecutor(this);
-	} 
+//	public ShellExecutor newExecutor(){
+//		return new ShellExecutor(this);
+//	} 
 }

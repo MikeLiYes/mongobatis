@@ -7,9 +7,9 @@ import com.github.mikeliyes.mongobatis.model.Configuration;
 public class MapperProxy {
 	
 	private MapperHandler mapperHandler;
-	
+
 	public MapperProxy(Configuration configuration) {
-		if (configuration == null) {
+		if (this.mapperHandler == null) {
 			this.mapperHandler = new MapperHandler(configuration);
 		}
 	}

@@ -2,8 +2,11 @@ package com.github.mikeliyes.mongobatis.binding;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 
+import com.github.mikeliyes.mongobatis.exception.MessageException;
 import com.github.mikeliyes.mongobatis.model.Configuration;
+import com.github.mikeliyes.mongobatis.model.ShellMethod;
 
 public class MapperHandler implements InvocationHandler {
 	
@@ -15,10 +18,7 @@ public class MapperHandler implements InvocationHandler {
 
 	public Object invoke(Object proxy, Method method, Object[] args)
 			throws Throwable {
-//	    return method.invoke(this, args);
-		
 		handleConfiguration(method,args);
-		
 		return null;
 	}
 
@@ -27,9 +27,30 @@ public class MapperHandler implements InvocationHandler {
 			return;
 		}
 		
-		String fullMethodName = method.getName();
+		Parameter[] parameters=method.getParameters();
+		if (parameters == null || parameters.length != 1) {
+			throw new MessageException("method args are not allowed more than two");
+		}
 		
-		this.configuration.getMethodType();
+		Class clazz = method.getDeclaringClass();
+		String name = clazz.getName();
+		String methodName = method.getName();
+		String fullMethodName = name+"."+methodName;
+		ShellMethod shellMethod = this.configuration.getShellMethod(fullMethodName);
+
+		for(int j=0;j<parameters.length;j++)
+		{
+			String paramName = parameters[j].getName();
+			Class paramType = parameters[j].getType();
+			
+			
+			
+			System.out.println(parameters[j].getName()+"~~~~"+parameters[j].getType());
+		}
+
+		
+		System.out.println("");
+		
 	}
 
 }

@@ -12,7 +12,7 @@ public class Mapper {
 	/**********mapper.xml start*****************/
 	private String nameSpace;
 	
-	private Map<String,Aggregate> aggregates;
+	private Map<String,ShellMethod> shellMethods;
 
 	/**********mapper.xml end*****************/
 
@@ -31,23 +31,21 @@ public class Mapper {
 	public void setNameSpace(String nameSpace) {
 		this.nameSpace = nameSpace;
 	}
-	
-	public Map<String, Aggregate> getAggregate() {
-		return aggregates;
+
+	public Map<String, ShellMethod> getShellMethods() {
+		return shellMethods;
 	}
 
-	public void setAggregate(Map<String, Aggregate> aggregates) {
-		this.aggregates = aggregates;
+	public void setShellMethods(Map<String, ShellMethod> shellMethods) {
+		this.shellMethods = shellMethods;
 	}
 	
-	public void setAggregate(Aggregate aggregate) {
-		
-		if (this.aggregates == null || this.aggregates.size() == 0) {
-            this.aggregates = new HashMap<String,Aggregate>();
+	public void setShellMethod(ShellMethod shellMethod) {
+		if (shellMethods == null) {
+			this.shellMethods = new HashMap<String,ShellMethod>();
 		}
 		
-		if (aggregate != null && aggregate.getId() != null && aggregate.getId().trim() != "") {
-			this.aggregates.put(aggregate.getId(),aggregate);
-		}
+		this.shellMethods.put(shellMethod.getFullMethodName(), shellMethod);
 	}
+	
 }

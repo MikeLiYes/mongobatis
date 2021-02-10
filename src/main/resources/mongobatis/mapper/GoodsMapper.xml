@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mapper namespace="com.rongge.ronggeopen.mapper.goods.GoodsMapper">
+<mapper namespace="com.github.mikeliyes.mongobatis.GoodsMapper">
 
 	<update id="update">
 		update goods

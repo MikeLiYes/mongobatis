@@ -15,10 +15,11 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import com.github.mikeliyes.mongobatis.io.Resources;
-import com.github.mikeliyes.mongobatis.model.Aggregate;
 import com.github.mikeliyes.mongobatis.model.Configuration;
 import com.github.mikeliyes.mongobatis.model.DataSource;
 import com.github.mikeliyes.mongobatis.model.Mapper;
+import com.github.mikeliyes.mongobatis.model.ShellMethod;
+import com.github.mikeliyes.mongobatis.utils.StringUtils;
 import com.github.mikeliyes.mongobatis.utils.XmlUtils;
 
 public class XmlConfigurationParser {
@@ -169,24 +170,26 @@ public class XmlConfigurationParser {
 		
 			String shellName = element.getNodeName();
 			
-			if (shellName != null 
-					&& shellName != ""
-					&& shellName.equalsIgnoreCase("aggregate")) {
+			if (StringUtils.isNotBlank(shellName)
+					&& shellName.equalsIgnoreCase(Configuration.METHOD_TYPE_AGGREGATE)) {
 				
-				Aggregate aggregate = new Aggregate();
+				ShellMethod method = new ShellMethod();
 				
 				String id = element.getAttribute("id");
-				aggregate.setId(id);
+				method.setId(id);
+				
+				method.setFullMethodName(mapper.getNameSpace()+"."+method.getId());
 				
 				String shell = element.getTextContent().replace("\n", "").replace("\t", "");
-				aggregate.setShell(new StringBuilder(shell));
+				method.setShell(new StringBuilder(shell));
 				
-				aggregate.setNameSpace(mapper.getNameSpace());
+				method.setNameSpace(mapper.getNameSpace());
 				
-				mapper.setAggregate(aggregate);
+				method.setMethodType(Configuration.METHOD_TYPE_AGGREGATE);
 				
-				configuration.setAggregate(aggregate);
+				mapper.setShellMethod(method);
 				
+				configuration.setShellMethod(method);
 				
 			}
 		
