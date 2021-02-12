@@ -5,6 +5,10 @@ import java.util.Map;
 
 public class ShellMethod {
 	
+	public static String placeHolderPre ="#{";
+	
+	public static String placeHolderSuf = "}";
+	
 	private String id;
 	
 	private String nameSpace;
@@ -14,7 +18,7 @@ public class ShellMethod {
    
     private String methodType;
 	
-	private StringBuilder shell;
+	private String shell;
 	
 	private Map<String,Param> parameters;
 
@@ -42,11 +46,11 @@ public class ShellMethod {
 		this.id = id;
 	}
 
-	public StringBuilder getShell() {
+	public String getShell() {
 		return shell;
 	}
 
-	public void setShell(StringBuilder shell) {
+	public void setShell(String shell) {
 		this.shell = shell;
 	}
 

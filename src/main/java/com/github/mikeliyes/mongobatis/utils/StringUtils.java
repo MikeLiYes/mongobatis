@@ -15,4 +15,20 @@ public class StringUtils {
 		}
 		return true;
 	}
+	
+	/** 
+     * Judge regx whether appear twice
+     */  
+    public static boolean isSingle(String str, String searchText) {  
+    	if (str.indexOf(searchText) > -1) {  
+        	
+        	int first = str.indexOf(searchText);
+        	int second = str.indexOf(str, first);
+        	if (second > -1) {
+        		return true;
+        	}
+        	
+        }  
+        return false;  
+    }  
 }

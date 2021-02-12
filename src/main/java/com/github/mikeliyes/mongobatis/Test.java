@@ -26,6 +26,8 @@ public class Test {
 //	            // 5.操作Mapper接口
 	            GoodsMapper mapper = shellSession.getMapper(GoodsMapper.class);
 	            List<DBObject>  list = mapper.findPage(9);
+	            Goods goods = new Goods();
+	            List<DBObject>  glist = mapper.findGoodsPage(goods);
 	            Iterator<DBObject> it = list.iterator();
 	            while(it.hasNext()){
 	            	DBObject n = it.next();

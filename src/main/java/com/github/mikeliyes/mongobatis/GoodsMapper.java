@@ -15,6 +15,8 @@ public interface GoodsMapper{
 	
 	public List<DBObject> findPage(Integer price);
 	
+	public List<DBObject> findGoodsPage(Goods goods);
+	
 	public DBObject findDetail(Long goodsId);
 	
 }

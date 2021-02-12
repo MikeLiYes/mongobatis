@@ -181,7 +181,7 @@ public class XmlConfigurationParser {
 				method.setFullMethodName(mapper.getNameSpace()+"."+method.getId());
 				
 				String shell = element.getTextContent().replace("\n", "").replace("\t", "");
-				method.setShell(new StringBuilder(shell));
+				method.setShell(shell);
 				
 				method.setNameSpace(mapper.getNameSpace());
 				

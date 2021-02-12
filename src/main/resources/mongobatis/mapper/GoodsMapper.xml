@@ -15,7 +15,21 @@
 		db.goods.aggregate([
 		    {	
 				      $match: {'price':	{$gte:#{price}}	}
-				}
+			},
+			{ 
+			      $project : { goodsId: 1, name : 1 , price : 1 ,weight:1} 
+			} 
+		]);
+	</aggregate>
+	
+	<aggregate id="findGoodsPage">
+		db.goods.aggregate([
+		    {	
+				      $match: {'price':	{$gte:#{goods.price}},'weight':{$gte:#{goods.weight}}	}
+			},
+			{ 
+			      $project : { goodsId: 1, name : 1 , price : 1 ,weight:1} 
+			} 
 		]);
 	</aggregate>
 
