@@ -7,6 +7,7 @@ import java.lang.reflect.Parameter;
 import com.github.mikeliyes.mongobatis.exception.MessageException;
 import com.github.mikeliyes.mongobatis.model.Configuration;
 import com.github.mikeliyes.mongobatis.model.ShellMethod;
+import com.github.mikeliyes.mongobatis.utils.CommonUtils;
 import com.github.mikeliyes.mongobatis.utils.StringUtils;
 
 public class MapperHandler implements InvocationHandler {
@@ -85,10 +86,15 @@ public class MapperHandler implements InvocationHandler {
 	 */
 	private String replaceObjectShell(String shell, String expression,
 			Object param) {
+		
+		boolean isBase = CommonUtils.isBaseDefaultValue(param);
+		if (!isBase && expression.indexOf(".") == -1) {
+			throw new MessageException("Xml object param should use xxx.xxx to express : "+param);
+		}
+		
 		if (StringUtils.isNotBlank(expression) 
-				&& expression.indexOf(".") > 0) {
-            
-			
+				&& expression.indexOf(".") > 0
+				&& !CommonUtils.isBaseDefaultValue(param)) {
 			
 		}
 		return shell;
@@ -101,7 +107,8 @@ public class MapperHandler implements InvocationHandler {
 	 */
 	private String replaceOneShell(String shell, String expression,Object param) {
 		if (StringUtils.isNotBlank(expression) 
-				&& expression.indexOf(".") == -1) {
+				&& expression.indexOf(".") == -1
+				&& CommonUtils.isBaseDefaultValue(param)) {
             
 			String exp = String.valueOf(param);
 			if (param != null 
