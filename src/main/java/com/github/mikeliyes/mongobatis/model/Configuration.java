@@ -11,8 +11,6 @@ import com.github.mikeliyes.mongobatis.utils.StringUtils;
  */
 public class Configuration {
 	
-	public static String METHOD_TYPE_AGGREGATE ="aggregate"; 
-	
 	private Map<String,DataSource> dataSources;
 
 	private Map<String,Mapper> mappers;
@@ -73,9 +71,4 @@ public class Configuration {
 		this.shellMethods.put(shellMethod.getFullMethodName(), shellMethod);
 	}
     
-    
-
-//	public ShellExecutor newExecutor(){
-//		return new ShellExecutor(this);
-//	} 
 }

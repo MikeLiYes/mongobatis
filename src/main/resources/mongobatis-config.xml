@@ -5,11 +5,13 @@
              <property name="url" value="127.0.0.1:27017"/>
              <!-- property name="username" value="mikelee"/> -->
              <!-- property name="password" value="mikelee"/> -->
+             <property name="dbname" value="example"/>
 	  </dataSource>
 	  <dataSource id="pro">
              <property name="url" value="127.0.0.1:27017"/>
              <!-- property name="username" value="mikelee"/> -->
              <!-- property name="password" value="mikelee"/> -->
+             <property name="dbname" value="example"/>
 	  </dataSource>
   </environment>
   <!-- 将mapper文件加入到配置文件中 -->

@@ -19,6 +19,8 @@ import com.github.mikeliyes.mongobatis.model.Configuration;
 import com.github.mikeliyes.mongobatis.model.DataSource;
 import com.github.mikeliyes.mongobatis.model.Mapper;
 import com.github.mikeliyes.mongobatis.model.ShellMethod;
+import com.github.mikeliyes.mongobatis.shell.SplitShellUtils;
+import com.github.mikeliyes.mongobatis.utils.MongoUtils;
 import com.github.mikeliyes.mongobatis.utils.StringUtils;
 import com.github.mikeliyes.mongobatis.utils.XmlUtils;
 
@@ -128,11 +130,14 @@ public class XmlConfigurationParser {
         			ds.setName(value);
         		}else if ("password".equalsIgnoreCase(name)){
         			ds.setPassword(value);
+        		}else if ("dbname".equalsIgnoreCase(name)) {
+        			ds.setDbName(value);
         		}
-            	
-            	
             }
 	    }
+		
+		MongoUtils.initMongoUtils(ds);
+		
 		configuration.setDataSource(ds);
 	}
 	/**       parse config.xml to Object  end      **/
@@ -171,7 +176,7 @@ public class XmlConfigurationParser {
 			String shellName = element.getNodeName();
 			
 			if (StringUtils.isNotBlank(shellName)
-					&& shellName.equalsIgnoreCase(Configuration.METHOD_TYPE_AGGREGATE)) {
+					&& shellName.equalsIgnoreCase(ShellMethod.METHOD_TYPE_AGGREGATE)) {
 				
 				ShellMethod method = new ShellMethod();
 				
@@ -185,7 +190,11 @@ public class XmlConfigurationParser {
 				
 				method.setNameSpace(mapper.getNameSpace());
 				
-				method.setMethodType(Configuration.METHOD_TYPE_AGGREGATE);
+				method.setMethodType(ShellMethod.METHOD_TYPE_AGGREGATE);
+				
+				
+				
+				SplitShellUtils.splitMethodShell(method);
 				
 				mapper.setShellMethod(method);
 				

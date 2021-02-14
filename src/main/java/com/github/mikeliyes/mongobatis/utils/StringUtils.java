@@ -30,5 +30,45 @@ public class StringUtils {
         	
         }  
         return false;  
-    }  
+    }
+    
+    public static String getSubStringInclude(String fullString,String startString,String endString){
+    	if (StringUtils.isBlank(startString) 
+    			|| StringUtils.isBlank(endString)
+    			|| StringUtils.isBlank(fullString)) {
+    		return null;
+    	}
+    	
+    	int start = fullString.indexOf(startString);
+    	
+    	if (start >= 0) {
+    		int end = fullString.indexOf(endString,start + startString.length());
+    		if (end >= 0) {
+    			String subString = fullString.substring(start, end + endString.length());
+    			return subString;
+    		}
+    	}
+    	
+    	return null;
+    }
+    
+    public static String getSubStringExclude(String fullString,String startString,String endString){
+    	if (StringUtils.isBlank(startString) 
+    			|| StringUtils.isBlank(endString)
+    			|| StringUtils.isBlank(fullString)) {
+    		return null;
+    	}
+    	
+    	int start = fullString.indexOf(startString);
+    	
+    	if (start >= 0) {
+    		int end = fullString.indexOf(endString,start + startString.length());
+    		if (end >= 0) {
+    			String subString = fullString.substring(start + startString.length(), end);
+    			return subString;
+    		}
+    	}
+    	
+    	return null;
+    }
 }

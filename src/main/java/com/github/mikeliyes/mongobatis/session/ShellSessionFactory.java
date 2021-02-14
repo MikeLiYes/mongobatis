@@ -1,6 +1,5 @@
 package com.github.mikeliyes.mongobatis.session;
 
-import com.github.mikeliyes.mongobatis.executor.ShellExecutor;
 import com.github.mikeliyes.mongobatis.model.Configuration;
 
 public class ShellSessionFactory {
@@ -20,8 +19,7 @@ public class ShellSessionFactory {
 	}
 
 	public Session openSession() {
-//		ShellExecutor executor = configuration.newExecutor();
-		return new Session(configuration, null);
+		return new Session(configuration);
 	}
 	
 	

@@ -13,6 +13,8 @@ public class DataSource {
 	private String password;
 	
 	private String url;
+	
+	private String dbName;
 
 	public String getName() {
 		return name;
@@ -45,4 +47,13 @@ public class DataSource {
 	public void setId(String id) {
 		this.id = id;
 	}
+
+	public String getDbName() {
+		return dbName;
+	}
+
+	public void setDbName(String dbName) {
+		this.dbName = dbName;
+	}
+
 }

@@ -1,13 +1,25 @@
 package com.github.mikeliyes.mongobatis.model;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ShellMethod {
 	
-	public static String placeHolderPre ="#{";
+	public static String PLACE_HOLDER_PRE ="#{";
 	
-	public static String placeHolderSuf = "}";
+	public static String PLACE_HOLDER_SUF = "}";
+	
+	public static String SPLITE_START = "([";
+	
+	public static String SPLITE_END = "])";
+	
+    public static String PIPE_START = "{";
+	
+	public static String PIPE_END = "}";
+	
+	public static String PIPE_SPLITE = "},";
+
+	public static String METHOD_TYPE_AGGREGATE ="aggregate"; 
 	
 	private String id;
 	
@@ -20,7 +32,11 @@ public class ShellMethod {
 	
 	private String shell;
 	
-	private Map<String,Param> parameters;
+	private String collectionName;
+	
+	private List<String> splitShell;
+	
+	private List<Integer> splitePlaceLoc;
 
 	public String getFullMethodName() {
 		return fullMethodName;
@@ -54,27 +70,40 @@ public class ShellMethod {
 		this.shell = shell;
 	}
 
-	public Map<String, Param> getParameters() {
-		return parameters;
-	}
-
-	public void setParameters(Map<String, Param> parameters) {
-		this.parameters = parameters;
-	}
-	
-	public void setParameters(Param param) {
-		if (this.parameters == null){
-			this.parameters = new HashMap<String,Param>();
-		}
-		this.parameters.put(param.getName(), param);
-	}
-
 	public String getNameSpace() {
 		return nameSpace;
 	}
 
 	public void setNameSpace(String nameSpace) {
 		this.nameSpace = nameSpace;
+	}
+
+	public List<String> getSplitShell() {
+		return splitShell;
+	}
+
+	public void setSplitShell(List<String> splitShell) {
+		this.splitShell = splitShell;
+	}
+
+	public List<Integer> getSplitePlaceLoc() {
+		return splitePlaceLoc;
+	}
+
+	public void setSplitePlaceLoc(Integer loc) {
+		if (this.splitePlaceLoc == null) {
+			this.splitePlaceLoc = new ArrayList<Integer>();
+		}
+		
+		this.splitePlaceLoc.add(loc);
+	}
+
+	public String getCollectionName() {
+		return collectionName;
+	}
+
+	public void setCollectionName(String collectionName) {
+		this.collectionName = collectionName;
 	}
 	
 }
