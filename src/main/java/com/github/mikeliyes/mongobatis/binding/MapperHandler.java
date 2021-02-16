@@ -2,12 +2,17 @@ package com.github.mikeliyes.mongobatis.binding;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
+
+import org.bson.BsonDocument;
+import org.bson.Document;
 
 import com.github.mikeliyes.mongobatis.exception.MessageException;
 import com.github.mikeliyes.mongobatis.model.Configuration;
 import com.github.mikeliyes.mongobatis.model.ShellMethod;
 import com.github.mikeliyes.mongobatis.utils.CommonUtils;
+import com.github.mikeliyes.mongobatis.utils.MongoUtils;
 import com.github.mikeliyes.mongobatis.utils.StringUtils;
 
 public class MapperHandler implements InvocationHandler {
@@ -20,14 +25,15 @@ public class MapperHandler implements InvocationHandler {
 
 	public Object invoke(Object proxy, Method method, Object[] args)
 			throws Throwable {
-		handleConfiguration(proxy,method,args);
-		return null;
+		ShellMethod shellMethod = judge(proxy,method,args);
+		
+        return handle(shellMethod,method,args);
 	}
 
-	private void handleConfiguration(Object proxy,Method method,Object[] args) {
+	private ShellMethod judge(Object proxy,Method method,Object[] args) {
 
 		if (this.configuration == null) {
-			return;
+			throw new MessageException("invoke method : config.xml is null");
 		}
 		
 		Class clazz = method.getDeclaringClass();
@@ -35,49 +41,51 @@ public class MapperHandler implements InvocationHandler {
 		String methodName = method.getName();
 		String fullMethodName = name+"."+methodName;
 		
-		
 		if (args == null || args.length != 1) {
-			throw new MessageException("method param are not allowed more than two : "+fullMethodName);
+			throw new MessageException("invoke method :  param are not allowed more than two : "+fullMethodName);
 		}
 		
 		ShellMethod shellMethod = this.configuration.getShellMethod(fullMethodName);
 		if (shellMethod == null ) {
-			throw new MessageException("no such method in xml : "+fullMethodName);
+			throw new MessageException("invoke method : no such method in xml : "+fullMethodName);
 		}
 		
 		String shell = shellMethod.getShell();
 		if (StringUtils.isBlank(shell) ) {
-			throw new MessageException("no such shell for method : "+fullMethodName);
+			throw new MessageException("invoke method : no such shell for method : "+fullMethodName);
 		}
 		
 		Object param = args[0];
 		if (param == null) {
-			throw new MessageException("no such param for method : "+fullMethodName);
+			throw new MessageException("invoke method : no param for method : "+fullMethodName);
 		}
 		
-		int first = shell.indexOf(ShellMethod.PLACE_HOLDER_PRE);
+		return shellMethod;
+	}
+	
+	private List<Document> handle(ShellMethod shellMethod,Method method, Object[] args) {
+		String shell = shellMethod.getShell();		
+		
+        int first = shell.indexOf(ShellMethod.PLACE_HOLDER_PRE);
         
 		if (first > 0) {
 			int last = shell.indexOf(ShellMethod.PLACE_HOLDER_SUF,first);
 			
 			String expression = shell.substring(first, last + ShellMethod.PLACE_HOLDER_SUF.length());
 			
+			Object param = args[0];
+			
 			// one param
-			replaceOneShell(shellMethod,expression,param);
+			List<Document> list = replaceOneShell(shellMethod,expression,param);
+			
+			return list;
 			
 			// object param
 //			replaceObjectShell(shell,expression,param);
 			
-			
 		}
 		
-
-		
-			System.out.println("");
-
-		
-		System.out.println("");
-		
+		return null;
 	}
 
 	/**
@@ -106,7 +114,7 @@ public class MapperHandler implements InvocationHandler {
 	 * @param shell
 	 * @param expression
 	 */
-	private void replaceOneShell(ShellMethod shellMethod, String expression,Object param) {
+	private List<Document> replaceOneShell(ShellMethod shellMethod, String expression,Object param) {
 		if (StringUtils.isNotBlank(expression) 
 				&& expression.indexOf(".") == -1
 				&& CommonUtils.isBaseType(param)) {
@@ -117,26 +125,38 @@ public class MapperHandler implements InvocationHandler {
 				replceParam = "'"+ replceParam +"'";
 			}
 			
-			replaceAggregateOneShell(shellMethod, expression, replceParam);
-			
+			return replaceAggregateOneShell(shellMethod, expression, replceParam);
 		}
+		return null;
 	}
 
-	private void replaceAggregateOneShell(ShellMethod shellMethod,
+	private List<Document> replaceAggregateOneShell(ShellMethod shellMethod,
 			String expression, String replceParam) {
 		if (shellMethod != null && ShellMethod.METHOD_TYPE_AGGREGATE.equalsIgnoreCase(shellMethod.getMethodType())) {
 			List<Integer> locs = shellMethod.getSplitePlaceLoc();
-			for (Integer loc : locs) {
-				List<String> spliteShells = shellMethod.getSplitShell();
-				String spliteShell = spliteShells.get(loc);
-				spliteShell = spliteShell.replace(expression, replceParam);
-				spliteShells.set(loc, spliteShell);
+			List<String> spliteShells = new ArrayList<String>(shellMethod.getSplitShell());
+			
+			if (locs != null && locs.size() > 0) {
+				for (Integer loc : locs) {
+					String spliteShell = spliteShells.get(loc);
+					spliteShell = spliteShell.replace(expression, replceParam);
+					spliteShells.set(loc, spliteShell);
+				}
 			}
 			
+			List<BsonDocument> pipeline = new ArrayList<BsonDocument>();
+			for (String spliteX : spliteShells) {
+				
+				if (StringUtils.isBlank(spliteX)) {
+					throw new MessageException("Shell has empty {}");
+				}
+				
+				BsonDocument doc = BsonDocument.parse(spliteX.trim());
+				pipeline.add(doc);
+			}
 			
+			return MongoUtils.aggregate(shellMethod.getCollectionName(), pipeline);
 		}
+		return null;
 	}
-	
-	
-
 }

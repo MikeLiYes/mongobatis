@@ -4,6 +4,8 @@ import java.io.Reader;
 import java.util.Iterator;
 import java.util.List;
 
+import org.bson.Document;
+
 import com.github.mikeliyes.mongobatis.io.Resources;
 import com.github.mikeliyes.mongobatis.session.Session;
 import com.github.mikeliyes.mongobatis.session.ShellSessionFactory;
@@ -25,12 +27,12 @@ public class Test {
 	            Session shellSession = shellSessionFactory.openSession();
 //	            // 5.操作Mapper接口
 	            GoodsMapper mapper = shellSession.getMapper(GoodsMapper.class);
-	            List<DBObject>  list = mapper.findPage(9);
-	            Goods goods = new Goods();
-	            List<DBObject>  glist = mapper.findGoodsPage(goods);
-	            Iterator<DBObject> it = list.iterator();
+	            List<Document>  list = mapper.findPage(9);
+//	            Goods goods = new Goods();
+//	            List<DBObject>  glist = mapper.findGoodsPage(goods);
+	            Iterator<Document> it = list.iterator();
 	            while(it.hasNext()){
-	            	DBObject n = it.next();
+	            	Document n = it.next();
 	            	System.out.println("next : "+n);
 	            }
 	            

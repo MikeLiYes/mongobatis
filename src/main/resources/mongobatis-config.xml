@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
   <environment>
-	  <dataSource id="dev">
+	  <dataSource id="dev" isDefault="true">
              <property name="url" value="127.0.0.1:27017"/>
              <!-- property name="username" value="mikelee"/> -->
              <!-- property name="password" value="mikelee"/> -->

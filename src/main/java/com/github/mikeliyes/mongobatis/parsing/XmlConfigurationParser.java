@@ -110,7 +110,13 @@ public class XmlConfigurationParser {
 		if (node.getNodeType()==Node.ELEMENT_NODE) {
 			Element dataSource = (Element)node;
 			String id = dataSource.getAttribute("id");
+			String isDefault = dataSource.getAttribute("isDefault");
 			ds.setId(id);
+			
+			if (StringUtils.isNotBlank(isDefault)
+					|| "true".equalsIgnoreCase(isDefault.trim())) {
+				configuration.setDataSourceEnv(id);
+			}
 		}
 	}
 
@@ -136,7 +142,9 @@ public class XmlConfigurationParser {
             }
 	    }
 		
-		MongoUtils.initMongoUtils(ds);
+		if (StringUtils.isNotBlank(configuration.getDataSourceEnv())) {
+			MongoUtils.initMongoUtils(ds);
+		}
 		
 		configuration.setDataSource(ds);
 	}
@@ -185,14 +193,15 @@ public class XmlConfigurationParser {
 				
 				method.setFullMethodName(mapper.getNameSpace()+"."+method.getId());
 				
-				String shell = element.getTextContent().replace("\n", "").replace("\t", "");
+				String shell = element.getTextContent().replace("\n", "").replace("\t", "").replaceAll(" ", "").toLowerCase();
 				method.setShell(shell);
 				
 				method.setNameSpace(mapper.getNameSpace());
 				
 				method.setMethodType(ShellMethod.METHOD_TYPE_AGGREGATE);
 				
-				
+				String collectionName = StringUtils.getSubStringExclude(shell, ShellMethod.COLLECTION_NAME_START, ShellMethod.COLLECTION_NAME_END);
+				method.setCollectionName(collectionName);
 				
 				SplitShellUtils.splitMethodShell(method);
 				

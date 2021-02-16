@@ -7,7 +7,6 @@ import org.bson.BsonDocument;
 import org.bson.Document;
 
 import com.github.mikeliyes.mongobatis.model.DataSource;
-import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
@@ -43,15 +42,18 @@ public class MongoUtils {
      * @param pipeline
      * @return
      */
-    public static List<Object> aggregate(String collectionName,List<BsonDocument> pipeline) {
+    public static List<Document> aggregate(String collectionName,List<BsonDocument> pipeline) {
     	if (StringUtils.isBlank(collectionName) || pipeline == null || pipeline.size() == 0) {
     		return null;
     	}
 
     	MongoCursor cursor = getCollection(collectionName).aggregate(pipeline).iterator();
-        List<Object> list = new ArrayList<Object>();
+        List<Document> list = new ArrayList<Document>();
         while (cursor.hasNext()) {
-//            list.add(cursor.next());
+        	Object obj = cursor.next();
+        	if (obj != null && obj instanceof Document) {
+        		list.add((Document)obj);
+        	}
         }
         
         return list;

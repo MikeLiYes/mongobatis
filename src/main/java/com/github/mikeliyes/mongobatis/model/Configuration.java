@@ -12,6 +12,8 @@ import com.github.mikeliyes.mongobatis.utils.StringUtils;
 public class Configuration {
 	
 	private Map<String,DataSource> dataSources;
+	
+	private String dataSourceEnv;
 
 	private Map<String,Mapper> mappers;
 
@@ -69,6 +71,14 @@ public class Configuration {
 			return;
 		}
 		this.shellMethods.put(shellMethod.getFullMethodName(), shellMethod);
+	}
+
+	public String getDataSourceEnv() {
+		return dataSourceEnv;
+	}
+
+	public void setDataSourceEnv(String dataSourceEnv) {
+		this.dataSourceEnv = dataSourceEnv;
 	}
     
 }

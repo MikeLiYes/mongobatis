@@ -32,6 +32,17 @@ public class StringUtils {
         return false;  
     }
     
+    /**
+     * zsmnjkt
+     * start: s
+     * end: k
+     * return smnjk
+     * 
+     * @param fullString
+     * @param startString
+     * @param endString
+     * @return
+     */
     public static String getSubStringInclude(String fullString,String startString,String endString){
     	if (StringUtils.isBlank(startString) 
     			|| StringUtils.isBlank(endString)
@@ -52,6 +63,17 @@ public class StringUtils {
     	return null;
     }
     
+    /**
+     * zsmnjkt
+     * start: s
+     * end: k
+     * return mnj
+     * 
+     * @param fullString
+     * @param startString
+     * @param endString
+     * @return
+     */
     public static String getSubStringExclude(String fullString,String startString,String endString){
     	if (StringUtils.isBlank(startString) 
     			|| StringUtils.isBlank(endString)

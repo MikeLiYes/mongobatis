@@ -2,8 +2,9 @@ package com.github.mikeliyes.mongobatis;
 
 import java.util.List;
 
+import org.bson.Document;
+
 import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
 
 public interface GoodsMapper{
    
@@ -13,10 +14,10 @@ public interface GoodsMapper{
 	
 	public void insert(BasicDBObject goods);
 	
-	public List<DBObject> findPage(Integer price);
+	public List<Document> findPage(Integer price);
 	
-	public List<DBObject> findGoodsPage(Goods goods);
+	public List<Document> findGoodsPage(Goods goods);
 	
-	public DBObject findDetail(Long goodsId);
+	public Document findDetail(Long goodsId);
 	
 }

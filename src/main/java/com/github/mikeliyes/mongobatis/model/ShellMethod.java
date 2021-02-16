@@ -9,17 +9,21 @@ public class ShellMethod {
 	
 	public static String PLACE_HOLDER_SUF = "}";
 	
-	public static String SPLITE_START = "([";
+	public static String SPLITE_START = "([{";
 	
-	public static String SPLITE_END = "])";
+	public static String SPLITE_END = "}])";
 	
     public static String PIPE_START = "{";
 	
 	public static String PIPE_END = "}";
 	
-	public static String PIPE_SPLITE = "},";
+	public static String PIPE_SPLITE = "},\\{";
 
 	public static String METHOD_TYPE_AGGREGATE ="aggregate"; 
+	
+	public static String COLLECTION_NAME_START = "db.";
+	
+	public static String COLLECTION_NAME_END = ".aggregate";
 	
 	private String id;
 	
