@@ -32,11 +32,18 @@ public class StringUtils {
         return false;  
     }
     
+    public static List<String> getSubStringsInclude(String fullString,String startString,String endString){
+    	
+    	
+    	
+    	return null;
+    }
+    
     /**
-     * zsmnjkt
-     * start: s
-     * end: k
-     * return smnjk
+     * #{price}
+     * start: #{
+     * end: }
+     * return #{price}
      * 
      * @param fullString
      * @param startString
@@ -64,10 +71,10 @@ public class StringUtils {
     }
     
     /**
-     * zsmnjkt
-     * start: s
-     * end: k
-     * return mnj
+     * #{price}
+     * start: #{
+     * end: }
+     * return price
      * 
      * @param fullString
      * @param startString

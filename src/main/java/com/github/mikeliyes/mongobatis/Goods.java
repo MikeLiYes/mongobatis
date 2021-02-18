@@ -5,6 +5,8 @@ public class Goods {
 	private Integer goodsId;
 	
 	private Double price;
+	
+	private Double weight;
 
 	public Integer getGoodsId() {
 		return goodsId;
@@ -21,5 +23,13 @@ public class Goods {
 	public void setPrice(Double price) {
 		this.price = price;
 	}
-	
+
+	public Double getWeight() {
+		return weight;
+	}
+
+	public void setWeight(Double weight) {
+		this.weight = weight;
+	}
+
 }

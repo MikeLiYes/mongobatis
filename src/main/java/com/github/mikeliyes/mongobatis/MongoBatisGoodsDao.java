@@ -6,7 +6,7 @@ import org.bson.Document;
 
 import com.mongodb.BasicDBObject;
 
-public interface GoodsMapper{
+public interface MongoBatisGoodsDao{
    
 	public void update(Long goodsId);
 	

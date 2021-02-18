@@ -5,16 +5,16 @@ import java.util.Map;
 
 public class Mapper {
 
-	/*********config.xml mapper start**************/ 
+	/*********config.xml dao start**************/ 
 	private String resource;
-	/*********config.xml mapper end**************/ 
+	/*********config.xml dao end**************/ 
 	
-	/**********mapper.xml start*****************/
+	/**********dao.xml start*****************/
 	private String nameSpace;
 	
 	private Map<String,ShellMethod> shellMethods;
 
-	/**********mapper.xml end*****************/
+	/**********dao.xml end*****************/
 
 	public String getResource() {
 		return resource;

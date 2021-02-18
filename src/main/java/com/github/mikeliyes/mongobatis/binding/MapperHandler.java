@@ -4,12 +4,14 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.bson.BsonDocument;
 import org.bson.Document;
 
 import com.github.mikeliyes.mongobatis.exception.MessageException;
 import com.github.mikeliyes.mongobatis.model.Configuration;
+import com.github.mikeliyes.mongobatis.model.Constants;
 import com.github.mikeliyes.mongobatis.model.ShellMethod;
 import com.github.mikeliyes.mongobatis.utils.CommonUtils;
 import com.github.mikeliyes.mongobatis.utils.MongoUtils;
@@ -26,8 +28,7 @@ public class MapperHandler implements InvocationHandler {
 	public Object invoke(Object proxy, Method method, Object[] args)
 			throws Throwable {
 		ShellMethod shellMethod = judge(proxy,method,args);
-		
-        return handle(shellMethod,method,args);
+        return handle(shellMethod,args);
 	}
 
 	private ShellMethod judge(Object proxy,Method method,Object[] args) {
@@ -41,7 +42,7 @@ public class MapperHandler implements InvocationHandler {
 		String methodName = method.getName();
 		String fullMethodName = name+"."+methodName;
 		
-		if (args == null || args.length != 1) {
+		if (args != null && args.length != 1) {
 			throw new MessageException("invoke method :  param are not allowed more than two : "+fullMethodName);
 		}
 		
@@ -55,37 +56,32 @@ public class MapperHandler implements InvocationHandler {
 			throw new MessageException("invoke method : no such shell for method : "+fullMethodName);
 		}
 		
-		Object param = args[0];
-		if (param == null) {
-			throw new MessageException("invoke method : no param for method : "+fullMethodName);
-		}
-		
 		return shellMethod;
 	}
 	
-	private List<Document> handle(ShellMethod shellMethod,Method method, Object[] args) {
-		String shell = shellMethod.getShell();		
+	private List<Document> handle(ShellMethod shellMethod, Object[] args) {
 		
-        int first = shell.indexOf(ShellMethod.PLACE_HOLDER_PRE);
-        
-		if (first > 0) {
-			int last = shell.indexOf(ShellMethod.PLACE_HOLDER_SUF,first);
+		Object param = args[0];
+		
+		List<Document> objList =  new ArrayList<Document>();
+		
+		if (args == null 
+				|| args.length == 0 
+				|| shellMethod.getSplitePlaceLoc() == null 
+				|| shellMethod.getSplitePlaceLoc().size() == 0) {
+			//no param
+			runAggregate(shellMethod,shellMethod.getSplitShell());
+		}else {
+			//one param
+			objList = replaceOneShell(shellMethod,param);
 			
-			String expression = shell.substring(first, last + ShellMethod.PLACE_HOLDER_SUF.length());
-			
-			Object param = args[0];
-			
-			// one param
-			List<Document> list = replaceOneShell(shellMethod,expression,param);
-			
-			return list;
-			
-			// object param
-//			replaceObjectShell(shell,expression,param);
-			
+			//one object param
+			if (objList == null) {
+				objList = replaceObjectShell(shellMethod,param);
+			}
 		}
 		
-		return null;
+		return objList;
 	}
 
 	/**
@@ -94,10 +90,23 @@ public class MapperHandler implements InvocationHandler {
 	 * @param expression
 	 * @param param
 	 */
-	private void replaceObjectShell(String shell, String expression,
-			Object param) {
-		
+	private List<Document> replaceObjectShell(ShellMethod shellMethod,Object param) {
+	
 		boolean isBase = CommonUtils.isBaseType(param);
+		
+		Map<String, Object> paramMap = CommonUtils.objectToMap(param);
+		
+		List<Integer> locs = shellMethod.getSplitePlaceLoc();
+		List<String> spliteShells = shellMethod.getSplitShell();
+		
+		for (int i = 0; i<locs.size();i++) {
+			Integer loc = locs.get(i);
+			String spliteShell = spliteShells.get(loc);
+			
+			
+		}
+		
+		
 		if (!isBase && expression.indexOf(".") == -1) {
 			throw new MessageException("Xml object param should use #{xxx.xxx} to express,not  : "+expression);
 		}
@@ -106,7 +115,11 @@ public class MapperHandler implements InvocationHandler {
 				&& expression.indexOf(".") > 0
 				&& !CommonUtils.isBaseType(param)) {
 			
+			
+			
 		}
+		
+		return null;
 	}
 
 	/** 
@@ -114,7 +127,12 @@ public class MapperHandler implements InvocationHandler {
 	 * @param shell
 	 * @param expression
 	 */
-	private List<Document> replaceOneShell(ShellMethod shellMethod, String expression,Object param) {
+	private List<Document> replaceOneShell(ShellMethod shellMethod,Object param) {
+		
+        String shell = shellMethod.getShell();		
+		
+        String expression = StringUtils.getSubStringInclude(shell, Constants.PLACE_HOLDER_PRE, Constants.PLACE_HOLDER_SUF);
+     
 		if (StringUtils.isNotBlank(expression) 
 				&& expression.indexOf(".") == -1
 				&& CommonUtils.isBaseType(param)) {
@@ -127,12 +145,15 @@ public class MapperHandler implements InvocationHandler {
 			
 			return replaceAggregateOneShell(shellMethod, expression, replceParam);
 		}
+			
 		return null;
+
 	}
 
 	private List<Document> replaceAggregateOneShell(ShellMethod shellMethod,
 			String expression, String replceParam) {
-		if (shellMethod != null && ShellMethod.METHOD_TYPE_AGGREGATE.equalsIgnoreCase(shellMethod.getMethodType())) {
+		if (shellMethod != null 
+				&& Constants.METHOD_TYPE_AGGREGATE.equalsIgnoreCase(shellMethod.getMethodType())) {
 			List<Integer> locs = shellMethod.getSplitePlaceLoc();
 			List<String> spliteShells = new ArrayList<String>(shellMethod.getSplitShell());
 			
@@ -144,19 +165,27 @@ public class MapperHandler implements InvocationHandler {
 				}
 			}
 			
-			List<BsonDocument> pipeline = new ArrayList<BsonDocument>();
-			for (String spliteX : spliteShells) {
-				
-				if (StringUtils.isBlank(spliteX)) {
-					throw new MessageException("Shell has empty {}");
-				}
-				
-				BsonDocument doc = BsonDocument.parse(spliteX.trim());
-				pipeline.add(doc);
-			}
-			
-			return MongoUtils.aggregate(shellMethod.getCollectionName(), pipeline);
+			return runAggregate(shellMethod, spliteShells);
+
 		}
 		return null;
+	}
+
+	private List<Document> runAggregate(ShellMethod shellMethod,
+			List<String> spliteShells) {
+		if(Constants.METHOD_TYPE_AGGREGATE.equalsIgnoreCase(shellMethod.getMethodType())) {
+			return null;
+		}
+		List<BsonDocument> pipeline = new ArrayList<BsonDocument>();
+		for (String spliteX : spliteShells) {
+			
+			if (StringUtils.isBlank(spliteX)) {
+				throw new MessageException("Shell has empty {}");
+			}
+			
+			BsonDocument doc = BsonDocument.parse(spliteX.trim());
+			pipeline.add(doc);
+		}
+		return MongoUtils.aggregate(shellMethod.getCollectionName(), pipeline);
 	}
 }

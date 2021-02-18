@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mapper namespace="com.github.mikeliyes.mongobatis.GoodsMapper">
+<dao namespace="com.github.mikeliyes.mongobatis.MongoBatisGoodsDao">
 
 	<update id="update">
 		update goods
@@ -38,4 +38,4 @@
 		FROM goods
 	</select>
 
-</mapper>
+</dao>

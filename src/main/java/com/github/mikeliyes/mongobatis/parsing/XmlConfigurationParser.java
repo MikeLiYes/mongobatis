@@ -16,6 +16,7 @@ import org.xml.sax.InputSource;
 
 import com.github.mikeliyes.mongobatis.io.Resources;
 import com.github.mikeliyes.mongobatis.model.Configuration;
+import com.github.mikeliyes.mongobatis.model.Constants;
 import com.github.mikeliyes.mongobatis.model.DataSource;
 import com.github.mikeliyes.mongobatis.model.Mapper;
 import com.github.mikeliyes.mongobatis.model.ShellMethod;
@@ -150,7 +151,7 @@ public class XmlConfigurationParser {
 	}
 	/**       parse config.xml to Object  end      **/
 	
-	/**       parse mapper.xml to Object start       **/
+	/**       parse dao.xml to Object start       **/
 	private void parseMappersXml(String resource,Mapper mapper) {
 		Reader reader = null;
 		try {
@@ -158,13 +159,14 @@ public class XmlConfigurationParser {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		Document mapperDoc = XmlUtils.createDocument(new InputSource(reader));  
+		Document mapperDoc = XmlUtils.createDocument(new InputSource(reader));
 		
 		//parse namespace
-		Node mapperNode = XmlUtils.evalNode(xpath, "mapper", mapperDoc);
+		Node mapperNode = XmlUtils.evalNode(xpath, Constants.DAO, mapperDoc);
+		
 		if (mapperNode != null && mapperNode.getNodeType()==Node.ELEMENT_NODE) {
         	Element mapperElement = (Element)mapperNode;
-        	String namespace = mapperElement.getAttribute("namespace");
+        	String namespace = mapperElement.getAttribute(Constants.NAME_SPACE);
         	mapper.setNameSpace(namespace);
 		}	
 		
@@ -184,7 +186,7 @@ public class XmlConfigurationParser {
 			String shellName = element.getNodeName();
 			
 			if (StringUtils.isNotBlank(shellName)
-					&& shellName.equalsIgnoreCase(ShellMethod.METHOD_TYPE_AGGREGATE)) {
+					&& shellName.equalsIgnoreCase(Constants.METHOD_TYPE_AGGREGATE)) {
 				
 				ShellMethod method = new ShellMethod();
 				
@@ -198,9 +200,9 @@ public class XmlConfigurationParser {
 				
 				method.setNameSpace(mapper.getNameSpace());
 				
-				method.setMethodType(ShellMethod.METHOD_TYPE_AGGREGATE);
+				method.setMethodType(Constants.METHOD_TYPE_AGGREGATE);
 				
-				String collectionName = StringUtils.getSubStringExclude(shell, ShellMethod.COLLECTION_NAME_START, ShellMethod.COLLECTION_NAME_END);
+				String collectionName = StringUtils.getSubStringExclude(shell, Constants.COLLECTION_NAME_START, Constants.COLLECTION_NAME_END);
 				method.setCollectionName(collectionName);
 				
 				SplitShellUtils.splitMethodShell(method);
@@ -213,5 +215,5 @@ public class XmlConfigurationParser {
 		
 	}
 	
-	/**       parse mapper.xml to Object end       **/
+	/**       parse dao.xml to Object end       **/
 }
