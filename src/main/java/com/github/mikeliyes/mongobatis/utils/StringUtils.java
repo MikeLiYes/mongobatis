@@ -1,5 +1,8 @@
 package com.github.mikeliyes.mongobatis.utils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class StringUtils {
 
 	public static boolean isBlank(String str){
@@ -33,10 +36,33 @@ public class StringUtils {
     }
     
     public static List<String> getSubStringsInclude(String fullString,String startString,String endString){
+    	if (StringUtils.isBlank(startString) 
+    			|| StringUtils.isBlank(endString)
+    			|| StringUtils.isBlank(fullString)) {
+    		return null;
+    	}
     	
+    	List<String> list = new ArrayList<String>();
     	
+    	String subFullString = new String(fullString);
     	
-    	return null;
+    	while(true){
+    		int start = subFullString.indexOf(startString);
+        	if (start >= 0) {
+        		int end = subFullString.indexOf(endString,start + startString.length());
+        		if (end >= 0) {
+        			String subString = subFullString.substring(start, end + endString.length());
+        			if (StringUtils.isNotBlank(subString)) {
+        				list.add(subString);
+        				subFullString = subFullString.substring(end + endString.length());
+        			}
+        		}
+        	}else {
+        		break;
+        	}
+    		
+    	}
+    	return list;
     }
     
     /**

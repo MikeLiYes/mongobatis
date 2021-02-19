@@ -18,7 +18,7 @@ import com.github.mikeliyes.mongobatis.io.Resources;
 import com.github.mikeliyes.mongobatis.model.Configuration;
 import com.github.mikeliyes.mongobatis.model.Constants;
 import com.github.mikeliyes.mongobatis.model.DataSource;
-import com.github.mikeliyes.mongobatis.model.Mapper;
+import com.github.mikeliyes.mongobatis.model.Dao;
 import com.github.mikeliyes.mongobatis.model.ShellMethod;
 import com.github.mikeliyes.mongobatis.shell.SplitShellUtils;
 import com.github.mikeliyes.mongobatis.utils.MongoUtils;
@@ -68,27 +68,27 @@ public class XmlConfigurationParser {
 	public Configuration parse() {
 		
 		parseDataSource();
-		parseMappers();
+		parseDaos();
 		
 	    return configuration;
     }
 
 	/**       parse config.xml to Object start       **/
-	private void parseMappers() {
-		Node mappers = XmlUtils.evalNode(xpath, "configuration/mappers", this.document);
+	private void parseDaos() {
+		Node daos = XmlUtils.evalNode(xpath, "configuration/daos", this.document);
 		
-		NodeList childNodes = mappers.getChildNodes();
+		NodeList childNodes = daos.getChildNodes();
 		for (int j = 0; j <childNodes.getLength() ; j++) {
             if (childNodes.item(j).getNodeType()==Node.ELEMENT_NODE) {
-            	Element mapperElement = (Element)childNodes.item(j);
-            	String resource = mapperElement.getAttribute("resource");
+            	Element daoElement = (Element)childNodes.item(j);
+            	String resource = daoElement.getAttribute("resource");
             	
-            	Mapper mapper = new Mapper();
-            	mapper.setResource(resource);
+            	Dao dao = new Dao();
+            	dao.setResource(resource);
             	
-            	parseMappersXml(resource,mapper);
+            	parseDaosXml(resource,dao);
             	
-            	configuration.setMapper(mapper);
+            	configuration.setDao(dao);
             }
 		} 
 		
@@ -152,36 +152,36 @@ public class XmlConfigurationParser {
 	/**       parse config.xml to Object  end      **/
 	
 	/**       parse dao.xml to Object start       **/
-	private void parseMappersXml(String resource,Mapper mapper) {
+	private void parseDaosXml(String resource,Dao dao) {
 		Reader reader = null;
 		try {
 			reader = Resources.getResourceAsReader(resource);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		Document mapperDoc = XmlUtils.createDocument(new InputSource(reader));
+		Document daoDoc = XmlUtils.createDocument(new InputSource(reader));
 		
 		//parse namespace
-		Node mapperNode = XmlUtils.evalNode(xpath, Constants.DAO, mapperDoc);
+		Node daoNode = XmlUtils.evalNode(xpath, Constants.DAO, daoDoc);
 		
-		if (mapperNode != null && mapperNode.getNodeType()==Node.ELEMENT_NODE) {
-        	Element mapperElement = (Element)mapperNode;
-        	String namespace = mapperElement.getAttribute(Constants.NAME_SPACE);
-        	mapper.setNameSpace(namespace);
+		if (daoNode != null && daoNode.getNodeType()==Node.ELEMENT_NODE) {
+        	Element daoElement = (Element)daoNode;
+        	String namespace = daoElement.getAttribute(Constants.NAME_SPACE);
+        	dao.setNameSpace(namespace);
 		}	
 		
 		//parse aggregate
-		NodeList childNodes = mapperNode.getChildNodes();
+		NodeList childNodes = daoNode.getChildNodes();
 		for (int j = 0; j <childNodes.getLength() ; j++) {
 			if (childNodes.item(j).getNodeType()==Node.ELEMENT_NODE) {
 				Element shellEle = (Element)childNodes.item(j);
-                parseShellNode(shellEle, mapper);
+                parseShellNode(shellEle, dao);
 			}
 		}    
 		
 	}
 
-	private void parseShellNode(Element element,Mapper mapper) {
+	private void parseShellNode(Element element,Dao dao) {
 		
 			String shellName = element.getNodeName();
 			
@@ -193,12 +193,12 @@ public class XmlConfigurationParser {
 				String id = element.getAttribute("id");
 				method.setId(id);
 				
-				method.setFullMethodName(mapper.getNameSpace()+"."+method.getId());
+				method.setFullMethodName(dao.getNameSpace()+"."+method.getId());
 				
 				String shell = element.getTextContent().replace("\n", "").replace("\t", "").replaceAll(" ", "").toLowerCase();
 				method.setShell(shell);
 				
-				method.setNameSpace(mapper.getNameSpace());
+				method.setNameSpace(dao.getNameSpace());
 				
 				method.setMethodType(Constants.METHOD_TYPE_AGGREGATE);
 				
@@ -207,7 +207,7 @@ public class XmlConfigurationParser {
 				
 				SplitShellUtils.splitMethodShell(method);
 				
-				mapper.setShellMethod(method);
+				dao.setShellMethod(method);
 				
 				configuration.setShellMethod(method);
 				

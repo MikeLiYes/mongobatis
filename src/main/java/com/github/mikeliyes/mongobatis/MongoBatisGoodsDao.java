@@ -18,6 +18,8 @@ public interface MongoBatisGoodsDao{
 	
 	public List<Document> findGoodsPage(Goods goods);
 	
+	public List<Document> findNoParam();
+	
 	public Document findDetail(Long goodsId);
 	
 }

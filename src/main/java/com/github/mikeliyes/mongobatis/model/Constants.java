@@ -1,5 +1,7 @@
 package com.github.mikeliyes.mongobatis.model;
 
+import com.github.mikeliyes.mongobatis.utils.StringUtils;
+
 public class Constants {
 	/********** xml dao constants start *********************/
 	public static String DAO = "dao";
@@ -11,6 +13,22 @@ public class Constants {
     public static String PLACE_HOLDER_PRE ="#{";
 	
 	public static String PLACE_HOLDER_SUF = "}";
+	
+	public static String PLACE_HOLDER_PRE_REPLACE ="#\\{";
+	
+	public static String getPlaceHolderOjbectPreReplace(String collectionName){
+		if(StringUtils.isBlank(collectionName)){
+			return Constants.PLACE_HOLDER_PRE_REPLACE;
+		}
+		return Constants.PLACE_HOLDER_PRE_REPLACE+collectionName+".";
+	} 
+	
+	public static String getPlaceHolderOjbectPre(String collectionName){
+		if(StringUtils.isBlank(collectionName)){
+			return Constants.PLACE_HOLDER_PRE;
+		}
+		return Constants.PLACE_HOLDER_PRE+collectionName+".";
+	} 
 	
 	public static String SPLITE_START = "([{";
 	

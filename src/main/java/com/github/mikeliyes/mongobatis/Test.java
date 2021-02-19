@@ -25,23 +25,30 @@ public class Test {
 //	            // 4.获取Session
 	            Session shellSession = shellSessionFactory.openSession();
 //	            // 5.操作Mapper接口
-	            MongoBatisGoodsDao mapper = shellSession.getMapper(MongoBatisGoodsDao.class);
+	            MongoBatisGoodsDao dao = shellSession.getDao(MongoBatisGoodsDao.class);
 	            
-//	            List<Document>  list = mapper.findPage(9);
-//	            Iterator<Document> it = list.iterator();
-//	            while(it.hasNext()){
-//	            	Document n = it.next();
-//	            	System.out.println("next : "+n);
-//	            }
+	            List<Document>  list = dao.findPage(9);
+	            Iterator<Document> it = list.iterator();
+	            while(it.hasNext()){
+	            	Document n = it.next();
+	            	System.out.println("next : "+n);
+	            }
 	            
 	            Goods goods = new Goods();
 	            goods.setPrice(9d);
 	            goods.setWeight(2d);
-	            List<Document>  glist = mapper.findGoodsPage(goods);
+	            List<Document>  glist = dao.findGoodsPage(goods);
 	            Iterator<Document> it2 = glist.iterator();
 	            while(it2.hasNext()){
 	            	Document n = it2.next();
 	            	System.out.println("it2 next : "+n);
+	            }
+	            
+	            List<Document>  nlist = dao.findNoParam();
+	            Iterator<Document> it3 = nlist.iterator();
+	            while(it3.hasNext()){
+	            	Document n = it3.next();
+	            	System.out.println("it3 next : "+n);
 	            }
 	            
 	        } catch (Exception e) {

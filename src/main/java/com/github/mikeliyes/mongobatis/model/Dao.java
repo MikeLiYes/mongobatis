@@ -3,7 +3,7 @@ package com.github.mikeliyes.mongobatis.model;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Mapper {
+public class Dao {
 
 	/*********config.xml dao start**************/ 
 	private String resource;

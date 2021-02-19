@@ -17,11 +17,11 @@ import com.github.mikeliyes.mongobatis.utils.CommonUtils;
 import com.github.mikeliyes.mongobatis.utils.MongoUtils;
 import com.github.mikeliyes.mongobatis.utils.StringUtils;
 
-public class MapperHandler implements InvocationHandler {
+public class DaoHandler implements InvocationHandler {
 	
 	private Configuration configuration;
 	
-    public MapperHandler(Configuration configuration) {
+    public DaoHandler(Configuration configuration) {
     	this.configuration = configuration;
 	}	
 
@@ -60,9 +60,7 @@ public class MapperHandler implements InvocationHandler {
 	}
 	
 	private List<Document> handle(ShellMethod shellMethod, Object[] args) {
-		
-		Object param = args[0];
-		
+
 		List<Document> objList =  new ArrayList<Document>();
 		
 		if (args == null 
@@ -70,8 +68,10 @@ public class MapperHandler implements InvocationHandler {
 				|| shellMethod.getSplitePlaceLoc() == null 
 				|| shellMethod.getSplitePlaceLoc().size() == 0) {
 			//no param
-			runAggregate(shellMethod,shellMethod.getSplitShell());
+			objList = runAggregate(shellMethod,shellMethod.getSplitShell());
 		}else {
+			Object param = args[0];
+			
 			//one param
 			objList = replaceOneShell(shellMethod,param);
 			
@@ -94,32 +94,51 @@ public class MapperHandler implements InvocationHandler {
 	
 		boolean isBase = CommonUtils.isBaseType(param);
 		
-		Map<String, Object> paramMap = CommonUtils.objectToMap(param);
+		if (isBase){
+			throw new MessageException("invoke method :  expect object param,but Basic data type in invoke");
+		}
+		
+		String collectionName = shellMethod.getCollectionName();
+		
+		Map<String, Object> paramMap = CommonUtils.objectToExpressMap(collectionName,param);
+		if (paramMap == null) {
+			throw new MessageException("invoke method :  paramMap is null ");
+		}
 		
 		List<Integer> locs = shellMethod.getSplitePlaceLoc();
-		List<String> spliteShells = shellMethod.getSplitShell();
+		List<String> spliteShells = new ArrayList<String>(shellMethod.getSplitShell());
 		
-		for (int i = 0; i<locs.size();i++) {
-			Integer loc = locs.get(i);
-			String spliteShell = spliteShells.get(loc);
-			
-			
+		if (locs == null || locs.size() > 0) {
+			for (int i = 0; i<locs.size();i++) {
+				Integer loc = locs.get(i);
+				String spliteShell = spliteShells.get(loc);
+				
+				spliteShell = replaceObjParam(collectionName, paramMap, spliteShell);
+				
+			    spliteShells.set(i, spliteShell);
+			    
+			}
 		}
 		
+		List<Document> res = runAggregate(shellMethod,spliteShells);
 		
-		if (!isBase && expression.indexOf(".") == -1) {
-			throw new MessageException("Xml object param should use #{xxx.xxx} to express,not  : "+expression);
+		return res;
+	}
+
+	private String replaceObjParam(String collectionName,
+			Map<String, Object> paramMap, String spliteShell) {
+		List<String> expressions = StringUtils.getSubStringsInclude(spliteShell, 
+				Constants.getPlaceHolderOjbectPre(collectionName), 
+				Constants.PLACE_HOLDER_SUF);
+		
+		if (expressions != null && expressions.size() > 0) {
+			for (String expression : expressions) {
+				Object obj = paramMap.get(expression);
+				String replceParam = convertParamToString(obj);
+				spliteShell = spliteShell.replace(expression, replceParam);
+			}	
 		}
-		
-		if (StringUtils.isNotBlank(expression) 
-				&& expression.indexOf(".") > 0
-				&& !CommonUtils.isBaseType(param)) {
-			
-			
-			
-		}
-		
-		return null;
+		return spliteShell;
 	}
 
 	/** 
@@ -137,17 +156,22 @@ public class MapperHandler implements InvocationHandler {
 				&& expression.indexOf(".") == -1
 				&& CommonUtils.isBaseType(param)) {
 			
-			String replceParam = String.valueOf(param);
-			if (param != null 
-					&& param instanceof String) {
-				replceParam = "'"+ replceParam +"'";
-			}
+			String replceParam = convertParamToString(param);
 			
 			return replaceAggregateOneShell(shellMethod, expression, replceParam);
 		}
 			
 		return null;
 
+	}
+
+	private String convertParamToString(Object param) {
+		String replceParam = String.valueOf(param);
+		if (param != null 
+				&& param instanceof String) {
+			replceParam = "'"+ replceParam +"'";
+		}
+		return replceParam;
 	}
 
 	private List<Document> replaceAggregateOneShell(ShellMethod shellMethod,
@@ -173,8 +197,8 @@ public class MapperHandler implements InvocationHandler {
 
 	private List<Document> runAggregate(ShellMethod shellMethod,
 			List<String> spliteShells) {
-		if(Constants.METHOD_TYPE_AGGREGATE.equalsIgnoreCase(shellMethod.getMethodType())) {
-			return null;
+		if(!Constants.METHOD_TYPE_AGGREGATE.equalsIgnoreCase(shellMethod.getMethodType())) {
+			throw new MessageException("invoke method : no support but aggregate method");
 		}
 		List<BsonDocument> pipeline = new ArrayList<BsonDocument>();
 		for (String spliteX : spliteShells) {

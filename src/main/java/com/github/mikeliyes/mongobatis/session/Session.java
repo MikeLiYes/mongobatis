@@ -10,8 +10,8 @@ public class Session {
     	this.configuration = configuration;
 	}
     
-    public <T> T getMapper(Class<T> type) {
-      return configuration.getMapper(type);
+    public <T> T getDao(Class<T> type) {
+      return configuration.getDao(type);
     }
 
 }

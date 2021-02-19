@@ -3,7 +3,7 @@ package com.github.mikeliyes.mongobatis.model;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.github.mikeliyes.mongobatis.binding.MapperProxy;
+import com.github.mikeliyes.mongobatis.binding.DaoProxy;
 import com.github.mikeliyes.mongobatis.utils.StringUtils;
 
 /**
@@ -15,23 +15,23 @@ public class Configuration {
 	
 	private String dataSourceEnv;
 
-	private Map<String,Mapper> mappers;
+	private Map<String,Dao> daos;
 
 	private Map<String,ShellMethod> shellMethods = new HashMap<String,ShellMethod>();;
 	
-	private MapperProxy proxy;
+	private DaoProxy proxy;
 	
 	public Configuration() {
 		if (this.dataSources == null || this.dataSources.size() == 0) {
 			this.dataSources = new HashMap<String,DataSource>();
 		}
 		
-		if (this.mappers == null || this.mappers.size() == 0) {
-			this.mappers = new HashMap<String,Mapper>();
+		if (this.daos == null || this.daos.size() == 0) {
+			this.daos = new HashMap<String,Dao>();
 		}
 		
 		if (this.proxy == null) {
-			this.proxy = new MapperProxy(this);
+			this.proxy = new DaoProxy(this);
 		}
 	}
 	
@@ -47,13 +47,13 @@ public class Configuration {
 		
 	}
 
-	public <T> T getMapper(Class<T> type) {
+	public <T> T getDao(Class<T> type) {
 		return (T)proxy.newInstance(type);
 	}
 	
-    public void setMapper(Mapper mapper) {
-		if (mapper != null && StringUtils.isNotBlank(mapper.getResource())) {
-			this.mappers.put(mapper.getResource(),mapper);
+    public void setDao(Dao dao) {
+		if (dao != null && StringUtils.isNotBlank(dao.getResource())) {
+			this.daos.put(dao.getResource(),dao);
 		}
 		
 	}
