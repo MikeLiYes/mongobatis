@@ -26,19 +26,19 @@
     </typeAliases>
 
 <!--    <typeHandlers>
-        <typeHandler handler="com.wuzz.type.MyTypeHandler"></typeHandler>
+        <typeHandler handler="com.xxx.type.MyTypeHandler"></typeHandler>
     </typeHandlers>-->
 
     <!-- 对象工厂 -->
-<!--    <objectFactory type="com.wuzz.objectfactory.GPObjectFactory">
+<!--    <objectFactory type="com.xxx.objectfactory.GPObjectFactory">
         <property name="wuzz" value="666"/>
     </objectFactory>-->
 
 <!--    <plugins>
-        <plugin interceptor="com.wuzz.interceptor.SQLInterceptor">
+        <plugin interceptor="com.xxx.interceptor.SQLInterceptor">
             <property name="wuzz" value="betterme" />
         </plugin>
-        <plugin interceptor="com.wuzz.interceptor.MyPageInterceptor">
+        <plugin interceptor="com.xxx.interceptor.MyPageInterceptor">
         </plugin>
     </plugins>-->
 

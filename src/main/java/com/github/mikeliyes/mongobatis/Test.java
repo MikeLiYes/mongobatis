@@ -17,7 +17,7 @@ public class Test {
 		 try {
 	            // 基本mybatis环境
 	            // 1.定义mybatis_config文件地址
-	            String resources = "mongobatis-config.xml";
+	            String resources = "mongobatis-config-demo-ttest.xml";
 	            // 2.获取InputStreamReaderIo流
 	            Reader reader = Resources.getResourceAsReader(resources);
 //	            // 3.获取SqlSessionFactory
