@@ -16,7 +16,7 @@ public interface MongoBatisGoodsDao{
 	
 	public List<Document> findPage(Integer price);
 	
-	public List<Document> findGoodsPage(Goods goods);
+	public List<Document> findGoodsPage(MongoBatisGoods goods);
 	
 	public List<Document> findNoParam();
 	

@@ -1,6 +1,6 @@
 package com.github.mikeliyes.mongobatis;
 
-public class Goods {
+public class MongoBatisGoods {
 	
 	private Integer goodsId;
 	

@@ -34,7 +34,7 @@ public class Test {
 	            	System.out.println("next : "+n);
 	            }
 	            
-	            Goods goods = new Goods();
+	            MongoBatisGoods goods = new MongoBatisGoods();
 	            goods.setPrice(9d);
 	            goods.setWeight(2d);
 	            List<Document>  glist = dao.findGoodsPage(goods);
