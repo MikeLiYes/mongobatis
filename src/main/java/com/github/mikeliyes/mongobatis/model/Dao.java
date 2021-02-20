@@ -16,6 +16,10 @@ public class Dao {
 
 	/**********dao.xml end*****************/
 
+	/**
+	 * 
+	 * @return resource
+	 */
 	public String getResource() {
 		return resource;
 	}

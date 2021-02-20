@@ -10,8 +10,8 @@ public class CommonUtils {
 
 	/**
 	 * Judge object wether base type
-	 * @param object
-	 * @return
+	 * @param object judge object 
+	 * @return whether basic type
 	 */
 	public static boolean isBaseType(Object object) {
 	    Class className = object.getClass();
@@ -37,8 +37,8 @@ public class CommonUtils {
 	
 	/**
      * convert object to map
-     * @param obj
-     * @return map
+     * @param object convert obj
+     * @return map result
      */
     public static Map<String, Object> objectToMap(Object object) {
     	if (object == null) {
@@ -63,8 +63,9 @@ public class CommonUtils {
     
     /**
      * convert object to map
-     * @param obj
-     * @return map
+     * @param collectionName mongodb collectionName
+     * @param object mognodb object
+     * @return ObjMap result
      */
     public static Map<String, Object> objectToExpressMap(String collectionName,Object object) {
     	if (object == null) {

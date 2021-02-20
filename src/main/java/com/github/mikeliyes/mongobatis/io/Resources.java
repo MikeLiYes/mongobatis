@@ -25,12 +25,12 @@ public class Resources {
 	    return reader;
 	  }
 	
-	/**
+	  /**
 	   * Returns a resource on the classpath as a Reader object
-	   *
 	   * @param resource The resource to find
+	   * @param charset The charset to set resource
 	   * @return The resource
-	   * @throws java.io.IOException If the resource cannot be found or read
+	   * @throws IOException exception
 	   */
 	  public static Reader getResourceAsReader(String resource,Charset charset) throws IOException {
 	    Reader reader;

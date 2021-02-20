@@ -18,10 +18,13 @@ public class StringUtils {
 		}
 		return true;
 	}
-	
-	/** 
-     * Judge regx whether appear twice
-     */  
+
+	/**
+	 * Judge regx whether appear twice
+	 * @param str string param
+	 * @param searchText text
+	 * @return true/false
+	 */
     public static boolean isSingle(String str, String searchText) {  
     	if (str.indexOf(searchText) > -1) {  
         	
@@ -66,15 +69,15 @@ public class StringUtils {
     }
     
     /**
-     * #{price}
+     *  #{price}
      * start: #{
      * end: }
      * return #{price}
      * 
-     * @param fullString
-     * @param startString
-     * @param endString
-     * @return
+     * @param fullString orgin string
+     * @param startString start string
+     * @param endString end string
+     * @return subString
      */
     public static String getSubStringInclude(String fullString,String startString,String endString){
     	if (StringUtils.isBlank(startString) 
@@ -102,10 +105,10 @@ public class StringUtils {
      * end: }
      * return price
      * 
-     * @param fullString
-     * @param startString
-     * @param endString
-     * @return
+     * @param fullString orgin string
+     * @param startString start string
+     * @param endString end string
+     * @return sub string
      */
     public static String getSubStringExclude(String fullString,String startString,String endString){
     	if (StringUtils.isBlank(startString) 

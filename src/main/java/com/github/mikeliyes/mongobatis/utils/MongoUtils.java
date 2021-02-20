@@ -37,11 +37,11 @@ public class MongoUtils {
     }
 	
 	/**
-     * aggregate
-     * @param collectionName
-     * @param pipeline
-     * @return
-     */
+	 * aggregate implement method
+	 * @param collectionName mongodb collection name
+	 * @param pipeline aggregate condition
+	 * @return result
+	 */
     public static List<Document> aggregate(String collectionName,List<BsonDocument> pipeline) {
     	if (StringUtils.isBlank(collectionName) || pipeline == null || pipeline.size() == 0) {
     		return null;
